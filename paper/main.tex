@@ -1,0 +1,46 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{mypackages}
+\usepackage{mycommands}
+\usepackage{myenv}
+
+\title{The Topology of Slicing:\\
+  Locating and Removing Forced Interruptions with a Map Chain}
+\author{Pierre-Olivier Bolduc}
+\date{12 October 2026}
+
+\hypersetup{
+  pdftitle={The Topology of Slicing: Locating and Removing Forced Interruptions with a Map Chain},
+  pdfauthor={Pierre-Olivier Bolduc}
+}
+
+\begin{document}
+  \maketitle
+
+  \input{sections/00_abstract}
+  \input{sections/01_introduction}
+  \input{sections/02_map_chain}
+  \input{sections/03_volumetric}
+  \input{sections/04_volumetric_evaluation}
+  \input{sections/05_kinematics_first}
+  \input{sections/06_outlook}
+  \input{sections/07_conclusion}
+  \label{main-text-end}
+
+  \clearpage
+  \appendix
+
+  \input{appendices/A_framework}
+  \input{appendices/B_volume}
+  \input{appendices/C_experiments}
+  \input{appendices/D_kinematics}
+
+  \clearpage
+  \bibliographystyle{unsrtnat}
+  \begingroup
+    \small\raggedright
+    \setlength{\bibsep}{2.5pt}
+    \bibliography{refs}
+  \endgroup
+
+\end{document}

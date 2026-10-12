@@ -1,0 +1,8 @@
+{
+  "source": "https://raw.githubusercontent.com/libigl/libigl-tutorial-data/master/bunny.off",
+  "source_sha256": "dda85ca6dc03ed83a0b754611d5c0b1a3c8ba5234e690479ac4a04063e6a7d4d",
+  "attribution": "Stanford University Computer Graphics Laboratory; redistributed by libigl tutorial data",
+  "preparation": "Converted OFF to binary STL; rotated +90 degrees about X from Y-up to Z-up; no repair or simplification",
+  "vertices": 3485,
+  "triangles": 6966
+}

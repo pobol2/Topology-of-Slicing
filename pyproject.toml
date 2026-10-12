@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mapchain"
+version = "0.1.0"
+description = "Research prototype for 'The Topology of Slicing: Locating and Removing Forced Interruptions with a Map Chain'."
+authors = [{ name = "Pierre-Olivier Bolduc" }]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.13"
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+dev = ["ruff==0.17.0"]
+
+[tool.setuptools.packages.find]
+include = ["mapchain*"]
+
+[tool.setuptools.package-data]
+"mapchain.volumetric.native" = ["adapter.cpp"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = [".geogram", ".cache", "__pycache__", ".ruff_cache", ".pytest_cache"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+    "E501",  # long strings (captions, statements) are kept on one line
+    "B905",  # zip() over equal-length arrays
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mapchain"]

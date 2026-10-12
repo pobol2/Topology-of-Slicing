@@ -1,0 +1,8 @@
+\section{Conclusion}
+\label{main:scope}
+
+Forced interruptions in slicing are topological (Section~\ref{sec:introduction}): the map chain shows which link supplies the components and what a construction that changes that link, or the order of construction, must guarantee in its place.
+
+The two applications find these components at two different links. In the first, they are the pieces of the source. A connected volume as the source removes them and leaves two obligations: a continuous measure-preserving traversal and a continuous geometry map. A Hilbert curve and optimal transport meet these obligations on convex parts. On non-convex parts, decomposing the source repairs the remaining failures up to each piece's hull gap, at the cost of a fixed number of transitions. In the second application, the components are the robot's posture sheets. Building admissible machine motion first lets the sheets guide the source split, and patches with continuous safe lifts, each visited once, attain the minimum.
+
+Neither algorithm alone shows that stops and posture switches obey one counting argument, attained in both cases by a source split matched to the components; the framework does. Maps that stay inside non-convex parts, sequencing of decomposed pieces, and smoothing that preserves containment and respects machine dynamics are the natural next steps, alongside the directions of Section~\ref{main:outlook}. Slicing has been developed by improving paths within a fixed chain. The chain itself---its links, their order, and the components each one supplies---is where the forced limits of a slicer are set, and where new slicers can be designed.

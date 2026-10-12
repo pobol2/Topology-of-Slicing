@@ -1,0 +1,927 @@
+{
+  "object": "torus",
+  "run_id": "torus-coacd-m4",
+  "files": {
+    "record": "results/volumetric/decomposition/torus/record.json",
+    "geometry": "results/volumetric/decomposition/torus/geometry.npz (mesh_vertices, mesh_faces, vertices, tetrahedra, piece_of, piece surfaces v<j>/f<j>)",
+    "paths": "results/volumetric/decomposition/torus/paths.npz (p<j>: path of piece j; e<j>: indices of its exterior segments)"
+  },
+  "geometry": {
+    "model": "models/torus.stl",
+    "construction": {
+      "existing_model": "models/torus.stl",
+      "model_sha256": "31c11cdd3075f44910aa120a209b077cbc17d196c451fe690bef571c123b58d5"
+    },
+    "coordinates": "normalised: x_norm = (x_model - centre) * scale + 0.5, which fits the model bounding box in [0.05, 0.95]^3; lengths are model units times scale",
+    "centre": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "scale": 0.18,
+    "tetrahedra": 47692,
+    "tetgen": {
+      "runtime_seconds": 0.5546652000048198,
+      "peak_process_tree_bytes": 135299072,
+      "initial_process_rss_bytes": 134258688,
+      "sampling_interval_seconds": 0.02,
+      "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)",
+      "vertex_count": 11188,
+      "tetrahedron_count": 47692,
+      "max_tetrahedron_volume": null,
+      "switches": "pq1.4Q"
+    },
+    "polygonal_solid_volume": 0.17206298083661145,
+    "tetrahedral_volume": 0.17206298007883047
+  },
+  "partition": {
+    "method": "CoACD-guided: each tetrahedron owned by the hull containing its centre most deeply (closest if none); face-connected components; components below min_fraction merged into the neighbour sharing most faces",
+    "parameters": {
+      "coacd_threshold": 0.05,
+      "coacd_seed": 0,
+      "coacd_hulls": 8,
+      "min_fraction": 0.01,
+      "tetrahedra_outside_every_hull": 4,
+      "components_merged": 4
+    },
+    "pieces": 8,
+    "checks": {
+      "coverage_volume": {
+        "method": "sum of tetrahedron volumes vs polygonal-solid volume",
+        "residual": 4.404090718248191e-09,
+        "tolerance": 1e-05,
+        "passed": true
+      },
+      "coverage_samples": {
+        "method": "evaluation samples inside the polygonal solid (winding > 1/2) that lie in no piece",
+        "samples_in_solid": 9960,
+        "samples_outside_polygonal_solid": 40,
+        "count": 0,
+        "tolerance": 0,
+        "passed": true
+      },
+      "ownership": {
+        "method": "tetrahedron-to-piece ownership array: every tetrahedron has exactly one owner",
+        "tetrahedra": 47692,
+        "unowned": 0,
+        "passed": true
+      },
+      "overlap_samples": {
+        "method": "evaluation samples that lie in two or more pieces",
+        "count": 0,
+        "tolerance": 0,
+        "passed": true
+      },
+      "connectivity": {
+        "method": "face-connected components of each piece",
+        "components_per_piece": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "passed": true
+      },
+      "volume_conservation": {
+        "method": "sum of piece volumes vs object tetrahedral volume; each piece surface volume vs its tetrahedral volume",
+        "sum_residual": 9.678633580417842e-16,
+        "max_surface_residual": 4.63093523800766e-15,
+        "tolerance": 1e-06,
+        "passed": true
+      },
+      "piece_surfaces": {
+        "method": "every piece surface closed and consistently oriented (needed for winding numbers)",
+        "passed": true
+      },
+      "passed": true
+    }
+  },
+  "transport": {
+    "method": "nested m-1 interpolation + HLBFGS handoff 0.5",
+    "order": 4,
+    "acceptance": "mapchain.volumetric.transport.acceptance_report: per-cell relative mass error < 1e-6, no empty or non-positive cells, finite centroids, centroid i power-nearest to Hilbert site i",
+    "paths": "independent: one Hilbert-ordered centroid polyline per piece; never connected"
+  },
+  "measurement_protocol": {
+    "domain": "the assigned piece Omega_j used by its solve",
+    "membership": "generalised winding number of the closed piece surface (libigl); inside when >= 1/2",
+    "distance": "exact point-to-triangle distance to the piece surface (libigl AABB)",
+    "boundary_tolerance": "a sample counts as outside only if winding < 1/2 and distance > 1e-09",
+    "sampling": "uniform samples along each segment, ceil(length/0.001)+1 per segment, endpoints included; spacing <= 0.001",
+    "note": "sampled measurements: zero exterior segments is not a containment certificate and the sampled depth is not a bound"
+  },
+  "certificate_protocol": {
+    "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+    "convexity": "verified convex when |conv(Omega_j)| - |Omega_j| <= 1e-09 |conv(Omega_j)| (then delta_j = 0)",
+    "bound": "on cubes of half-size s (r = s sqrt 3) covering conv(Omega_j): a cube meets the\nhull only if its centre is within r of every facet plane; dist(., Omega_j) is 1-Lipschitz, so a\ncube's supremum is at most max(0, sd(c) + r) + EPS, with sd(c) = -d(c) only if c is robustly inside\n(winding within 1/4 of 1 and d > TAU) and +d(c) otherwise. The lower bound L is the largest d at a\nrobustly outside centre inside the hull. Cubes with bound <= L are pruned; the rest are split until\nU - L <= tol. Assumption: the generalised winding number is correct to within 1/4 at points\nfarther than TAU from the surface.",
+    "tolerance": 0.002,
+    "eps": 1e-09,
+    "tau": 1e-09
+  },
+  "pieces": [
+    {
+      "piece_id": "torus-p0",
+      "label": "p0",
+      "tetrahedra": 4608,
+      "volume": 0.008725339687809563,
+      "mass_share": 0.050710150921552434,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 1.2380407939832137e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p0",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 7,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 2012,
+        "surface_volume": 0.008725339687809577
+      },
+      "certificate": {
+        "volume": 0.008725339687809577,
+        "hull_volume": 0.013538192954955161,
+        "volume_over_hull": 0.6444981037602944,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04994503258155496,
+        "lower_bound": 0.04885919274122775,
+        "gap": 0.0010858398403272088,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 6,
+        "final_half_size": 0.0004058188394992612,
+        "evaluated_centres": 3702,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.1177206999855116
+      },
+      "solve": {
+        "piece": 0,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 1.4439582862735278e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 1.4439582862735278e-10,
+        "max_cell_diameter": 0.07284303899600295,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 9,
+            "runtime_seconds": 0.5319501000340097
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.4066131999716163
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 12.655803900037427
+          }
+        ],
+        "solve_seconds": 15.68254240002716
+      },
+      "coacd_hulls": [
+        4
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 3995,
+        "segments": 4095,
+        "exterior_segments": 322,
+        "exterior_segment_fraction": 0.07863247863247863,
+        "max_sampled_excursion": 0.019138802417948342,
+        "samples": 75279,
+        "max_sample_spacing": 0.000999984097715068,
+        "measurement_seconds": 0.30858839995926246
+      }
+    },
+    {
+      "piece_id": "torus-p1",
+      "label": "p1",
+      "tetrahedra": 4561,
+      "volume": 0.008869732768151957,
+      "mass_share": 0.05154933829513064,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 1.258528766970963e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p1",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 6,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 2014,
+        "surface_volume": 0.008869732768151974
+      },
+      "certificate": {
+        "volume": 0.008869732768151974,
+        "hull_volume": 0.013390039814447315,
+        "volume_over_hull": 0.662412725508246,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04597069857103109,
+        "lower_bound": 0.04457902457635455,
+        "gap": 0.0013916739946765386,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 6,
+        "final_half_size": 0.0004058188394992612,
+        "evaluated_centres": 6984,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.18443040002603084
+      },
+      "solve": {
+        "piece": 1,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 1.8612578145393854e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 1.8612578145393854e-10,
+        "max_cell_diameter": 0.06933057002404715,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 9,
+            "runtime_seconds": 0.49452230002498254
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.4392423999961466
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 12.901625099999364
+          }
+        ],
+        "solve_seconds": 15.908923099981621
+      },
+      "coacd_hulls": [
+        6
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 4002,
+        "segments": 4095,
+        "exterior_segments": 308,
+        "exterior_segment_fraction": 0.07521367521367521,
+        "max_sampled_excursion": 0.01941419706652494,
+        "samples": 75627,
+        "max_sample_spacing": 0.0009999933198265832,
+        "measurement_seconds": 0.30387090001022443
+      }
+    },
+    {
+      "piece_id": "torus-p2",
+      "label": "p2",
+      "tetrahedra": 7875,
+      "volume": 0.03545197916533313,
+      "mass_share": 0.2060407134009352,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 5.030290854515019e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p2",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 2892,
+        "surface_volume": 0.03545197916533308
+      },
+      "certificate": {
+        "volume": 0.03545197916533308,
+        "hull_volume": 0.04033384625508239,
+        "volume_over_hull": 0.8789635122106869,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04415358892826948,
+        "lower_bound": 0.04231989693877423,
+        "gap": 0.001833691989495255,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 5,
+        "final_half_size": 0.0009496782087049717,
+        "evaluated_centres": 5837,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.28283889999147505
+      },
+      "solve": {
+        "piece": 2,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 1.1683320977340372e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 1.1683320977340372e-10,
+        "max_cell_diameter": 0.06325568039275008,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 7,
+            "runtime_seconds": 0.46764049999183044
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 1.977324299979955
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 10.35697090002941
+          }
+        ],
+        "solve_seconds": 13.286460899980739
+      },
+      "coacd_hulls": [
+        2
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 4074,
+        "segments": 4095,
+        "exterior_segments": 82,
+        "exterior_segment_fraction": 0.020024420024420026,
+        "max_sampled_excursion": 0.01589697049995011,
+        "samples": 99870,
+        "max_sample_spacing": 0.000999983478275079,
+        "measurement_seconds": 0.42006440000841394
+      }
+    },
+    {
+      "piece_id": "torus-p3",
+      "label": "p3",
+      "tetrahedra": 7484,
+      "volume": 0.03403180061981613,
+      "mass_share": 0.19778688364123703,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 4.8287813388973885e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p3",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 2862,
+        "surface_volume": 0.034031800619816165
+      },
+      "certificate": {
+        "volume": 0.034031800619816165,
+        "hull_volume": 0.0392271700344937,
+        "volume_over_hull": 0.8675568640279409,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.05620915716411077,
+        "lower_bound": 0.054615743345426154,
+        "gap": 0.001593413818684615,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 6,
+        "final_half_size": 0.00047049345015363913,
+        "evaluated_centres": 3967,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.1977879999903962
+      },
+      "solve": {
+        "piece": 3,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 6.541840402718435e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 6.541840402718435e-10,
+        "max_cell_diameter": 0.06850830632223705,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 7,
+            "runtime_seconds": 0.464397799980361
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.2601694999611937
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 10.044928699964657
+          }
+        ],
+        "solve_seconds": 13.244035799987614
+      },
+      "coacd_hulls": [
+        6,
+        7
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 4078,
+        "segments": 4095,
+        "exterior_segments": 81,
+        "exterior_segment_fraction": 0.01978021978021978,
+        "max_sampled_excursion": 0.00931719297343142,
+        "samples": 98414,
+        "max_sample_spacing": 0.000999999332979242,
+        "measurement_seconds": 0.3414314999827184
+      }
+    },
+    {
+      "piece_id": "torus-p4",
+      "label": "p4",
+      "tetrahedra": 8207,
+      "volume": 0.035431393934745266,
+      "mass_share": 0.2059210756347031,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 5.027370010612869e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p4",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 0,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 2992,
+        "surface_volume": 0.035431393934745224
+      },
+      "certificate": {
+        "volume": 0.035431393934745224,
+        "hull_volume": 0.04075102673023507,
+        "volume_over_hull": 0.8694601529746743,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.05168231874853266,
+        "lower_bound": 0.04985220570068547,
+        "gap": 0.0018301130478471858,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 6,
+        "final_half_size": 0.0004903775779603913,
+        "evaluated_centres": 5334,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.24684789997991174
+      },
+      "solve": {
+        "piece": 4,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 1.6801560143164807e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 1.6801560143164807e-10,
+        "max_cell_diameter": 0.07189956718314226,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 7,
+            "runtime_seconds": 0.5641145000117831
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.3649147000396624
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 10.623232600046322
+          }
+        ],
+        "solve_seconds": 13.849345900001936
+      },
+      "coacd_hulls": [
+        0,
+        1
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 4076,
+        "segments": 4095,
+        "exterior_segments": 63,
+        "exterior_segment_fraction": 0.015384615384615385,
+        "max_sampled_excursion": 0.011570248312787568,
+        "samples": 99535,
+        "max_sample_spacing": 0.0009999772289114627,
+        "measurement_seconds": 0.35294680000515655
+      }
+    },
+    {
+      "piece_id": "torus-p5",
+      "label": "p5",
+      "tetrahedra": 3902,
+      "volume": 0.007715011706998986,
+      "mass_share": 0.04483830108873136,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 1.0946850851741055e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p5",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 2,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 1810,
+        "surface_volume": 0.0077150117069989645
+      },
+      "certificate": {
+        "volume": 0.0077150117069989645,
+        "hull_volume": 0.012927493856027242,
+        "volume_over_hull": 0.5967909784309787,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.05324944132932836,
+        "lower_bound": 0.05208844439922043,
+        "gap": 0.0011609969301079257,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 6,
+        "final_half_size": 0.00039062370895408087,
+        "evaluated_centres": 4517,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.11953979998361319
+      },
+      "solve": {
+        "piece": 5,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 1.996727228004147e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 1.996727228004147e-10,
+        "max_cell_diameter": 0.07180280296703198,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 10,
+            "runtime_seconds": 0.8499101999914274
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.76168160000816
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 11.861176499980502
+          }
+        ],
+        "solve_seconds": 15.562014999974053
+      },
+      "coacd_hulls": [
+        3
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 3960,
+        "segments": 4095,
+        "exterior_segments": 417,
+        "exterior_segment_fraction": 0.10183150183150183,
+        "max_sampled_excursion": 0.02317967018611412,
+        "samples": 74707,
+        "max_sample_spacing": 0.0009999967201618706,
+        "measurement_seconds": 0.25946019997354597
+      }
+    },
+    {
+      "piece_id": "torus-p6",
+      "label": "p6",
+      "tetrahedra": 7308,
+      "volume": 0.03446270603830073,
+      "mass_share": 0.20029123070233748,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 4.889922624568786e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p6",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 2,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 2816,
+        "surface_volume": 0.034462706038300574
+      },
+      "certificate": {
+        "volume": 0.034462706038300574,
+        "hull_volume": 0.039312363915132736,
+        "volume_over_hull": 0.8766378463706337,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.050309573955016576,
+        "lower_bound": 0.04895434955992529,
+        "gap": 0.0013552243950912882,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 6,
+        "final_half_size": 0.0004599114979570475,
+        "evaluated_centres": 3959,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.18936030002078041
+      },
+      "solve": {
+        "piece": 6,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 1.3129208831230699e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 1.3129208831230699e-10,
+        "max_cell_diameter": 0.07125580769539196,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 7,
+            "runtime_seconds": 0.4847610999713652
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.4430663000093773
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 11.25942059996305
+          }
+        ],
+        "solve_seconds": 14.34410809999099
+      },
+      "coacd_hulls": [
+        4,
+        5
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 4084,
+        "segments": 4095,
+        "exterior_segments": 51,
+        "exterior_segment_fraction": 0.012454212454212455,
+        "max_sampled_excursion": 0.012045983032700732,
+        "samples": 98524,
+        "max_sample_spacing": 0.0009999983190118425,
+        "measurement_seconds": 0.3369142999872565
+      }
+    },
+    {
+      "piece_id": "torus-p7",
+      "label": "p7",
+      "tetrahedra": 3747,
+      "volume": 0.007375016157674883,
+      "mass_share": 0.04286230631537375,
+      "order": 4,
+      "waypoints": 4096,
+      "time_share_per_waypoint": 1.0464430252776795e-05,
+      "density": {
+        "target": "uniform: rho = 1/|Omega| on the represented solid",
+        "conditional": "rho_j = rho / w_j = 1/|Omega_j| on piece p7",
+        "solver_input": "unit nodal density on the piece tetrahedra, normalised by the solver to total mass 1"
+      },
+      "surface": {
+        "closed": true,
+        "winding_consistent": true,
+        "nonmanifold_edges": 9,
+        "boundary_edges": 0,
+        "body_count": 1,
+        "faces": 1732,
+        "surface_volume": 0.007375016157674906
+      },
+      "certificate": {
+        "volume": 0.007375016157674906,
+        "hull_volume": 0.011943604355957219,
+        "volume_over_hull": 0.6174866428823392,
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04550470669910952,
+        "lower_bound": 0.044167740175556976,
+        "gap": 0.0013369665235525435,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "levels": 5,
+        "final_half_size": 0.0007718974049203096,
+        "evaluated_centres": 6247,
+        "ambiguous_centres": 0,
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "assumption": "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+        "certificate_seconds": 0.13457870000274852
+      },
+      "solve": {
+        "piece": 7,
+        "passed": true,
+        "failure": null,
+        "converged": true,
+        "acceptance": {
+          "max_relative_mass_error": 2.0185009219630956e-10,
+          "relative_tolerance": 1e-06,
+          "empty_cells": 0,
+          "nonpositive_cell_masses": 0,
+          "finite_centroids": true,
+          "hilbert_misordered_cells": 0,
+          "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+          "passed": true
+        },
+        "iterations": 4,
+        "max_relative_mass_error": 2.0185009219630956e-10,
+        "max_cell_diameter": 0.059188861888358715,
+        "nested_levels": [
+          {
+            "order": 2,
+            "iterations": 9,
+            "runtime_seconds": 0.7004090999835171
+          },
+          {
+            "order": 3,
+            "iterations": 4,
+            "runtime_seconds": 2.5918458999949507
+          },
+          {
+            "order": 4,
+            "iterations": 4,
+            "runtime_seconds": 12.278678100032266
+          }
+        ],
+        "solve_seconds": 15.63169949996518
+      },
+      "coacd_hulls": [
+        1
+      ],
+      "measurements": {
+        "waypoints": 4096,
+        "waypoints_inside": 3975,
+        "segments": 4095,
+        "exterior_segments": 383,
+        "exterior_segment_fraction": 0.09352869352869353,
+        "max_sampled_excursion": 0.017629355636370355,
+        "samples": 73718,
+        "max_sample_spacing": 0.0009999889555318295,
+        "measurement_seconds": 0.2238690999802202
+      }
+    }
+  ],
+  "summary": {
+    "pieces": 8,
+    "all_solves_passed": true,
+    "failed_pieces": [],
+    "total_waypoints": 32768,
+    "waypoints_inside": 32244,
+    "waypoint_containment": 0.9840087890625,
+    "exterior_segments": 1707,
+    "segments": 32760,
+    "exterior_segment_fraction": 0.05210622710622711,
+    "max_sampled_excursion": 0.02317967018611412,
+    "verified_convex_pieces": 0,
+    "max_upper_bound": 0.05620915716411077,
+    "max_upper_bound_status": "every piece certified",
+    "partial_upper_bounds": {
+      "torus-p0": 0.04994503258155496,
+      "torus-p1": 0.04597069857103109,
+      "torus-p2": 0.04415358892826948,
+      "torus-p3": 0.05620915716411077,
+      "torus-p4": 0.05168231874853266,
+      "torus-p5": 0.05324944132932836,
+      "torus-p6": 0.050309573955016576,
+      "torus-p7": 0.04550470669910952
+    }
+  },
+  "timing": {
+    "boundaries": "coacd: CoACD hull computation (cached runs report the original time); tetrahedralization: TetGen; partition: ownership, components, piece surfaces; checks: partition checks; solve_wall: all piece solves in parallel (each solve_seconds: nested solve + acceptance in its worker); certificate and measurement per piece; total: whole script",
+    "coacd_seconds": 40.609451099997386,
+    "coacd_cached": false,
+    "tetrahedralization_seconds": 0.5761532000033185,
+    "partition_seconds": 42.408399699954316,
+    "checks_seconds": 0.22579719999339432,
+    "solve_wall_seconds": 17.374467800022103,
+    "sum_piece_solve_seconds": 117.50913069990929,
+    "total_seconds": 64.66291679994902,
+    "concurrency": "8 worker processes, one piece per task",
+    "hardware": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 158 Stepping 13, GenuineIntel",
+      "logical_cpus": 8,
+      "memory_bytes": 68634476544
+    }
+  },
+  "versions": {
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "trimesh": "4.12.2",
+    "tetgen": "0.8.4",
+    "manifold3d": "3.4.1",
+    "psutil": "7.2.2",
+    "geogram": "1.10.1",
+    "coacd": "1.0.14"
+  }
+}

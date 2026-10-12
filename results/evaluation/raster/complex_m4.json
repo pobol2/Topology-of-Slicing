@@ -1,0 +1,100 @@
+{
+  "p_path": 4,
+  "h": 0.0625,
+  "nominal_layer_count": 16,
+  "active_layer_count": 6,
+  "active_layer_indices": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "waypoint_count": 416,
+  "inter_layer_interruptions": 5,
+  "within_layer_interruptions": 32,
+  "total_interruptions": 37,
+  "all_moves_path_length": 30.42964798524557,
+  "travel_length": 6.80464798524557,
+  "depositing_path_length": 23.625,
+  "depositing_segment_count": 378,
+  "detected_jumps_depositing_segments": 0,
+  "segment_metrics": {
+    "model_name": "complex",
+    "waypoint_count": 416,
+    "segment_count": 378,
+    "sanity_check": {},
+    "parameters": {
+      "p_ot": 3,
+      "p_path": 4,
+      "project": false,
+      "k": 8,
+      "normalization_padding": 0.05,
+      "w": 0.0625,
+      "w_definition": "mean k=2 self-query second-neighbour distance",
+      "maximum_sampling_spacing": 0.001,
+      "actual_maximum_sampling_spacing": 0.000992063492063492,
+      "segment_sampling": "ceil(length/spacing)+1 uniform samples; endpoints included",
+      "shared_endpoints_counted_once_per_incident_segment": true,
+      "corner_threshold_degrees": [
+        1,
+        15,
+        45,
+        90
+      ],
+      "support_and_clearance_half_angles_degrees": [
+        45,
+        30
+      ],
+      "tan_45_degrees": 1.0,
+      "tan_30_degrees": 0.5773502691896257,
+      "z_min": 0.34375,
+      "build_plate_maximum_height": 0.375,
+      "distance_method": "exact analytic surface distance in inside_fn normalization frame",
+      "cone_algorithm": "imported exhaustive comparisons",
+      "segment_scope": "depositing segments only; all deposited waypoint centres for w/support/clearance/covering"
+    },
+    "w": 0.0625,
+    "total_segment_samples": 24192,
+    "exterior_sample_count": 0,
+    "exterior_segment_count": 0,
+    "exterior_segment_fraction": 0.0,
+    "exterior_arc_length": 0.0,
+    "exterior_arc_length_fraction": 0.0,
+    "maximum_excursion_depth": 0.0,
+    "exterior_segments_with_both_endpoints_inside": 0,
+    "path_length": 23.625,
+    "corners_above_degrees": {
+      "1": 60,
+      "15": 60,
+      "45": 60,
+      "90": 0
+    },
+    "zero_length_segment_count": 0,
+    "interior_waypoints_with_undefined_turn": 0,
+    "build_plate_waypoint_count": 102,
+    "ordered_deposition": {
+      "45": {
+        "unsupported_waypoint_count": 0,
+        "unsupported_waypoint_fraction": 0.0,
+        "clearance_violating_waypoint_count": 0,
+        "clearance_violating_waypoint_fraction": 0.0
+      },
+      "30": {
+        "unsupported_waypoint_count": 0,
+        "unsupported_waypoint_fraction": 0.0,
+        "clearance_violating_waypoint_count": 0,
+        "clearance_violating_waypoint_fraction": 0.0
+      }
+    },
+    "covering_radius_target_eval": 0.07337999230464229,
+    "covering_radius_target_eval_count": 10000,
+    "metric_runtime_seconds": 0.6017662000085693
+  },
+  "runtime_seconds": 1.2214513999933843,
+  "cell_count": 416,
+  "travel_move_count": 37,
+  "between_layer_stops": 5,
+  "travel_scope": "All within-layer gaps/nondepositing moves plus transitions between successive occupied layers"
+}

@@ -1,0 +1,15 @@
+# Direct dependencies, pinned to the environment used for the v1 checks.
+numpy==2.4.4
+scipy==1.17.1
+trimesh==4.12.2
+networkx==3.6.1  # used by trimesh for plane sections
+rtree==1.4.1
+matplotlib==3.10.9
+tetgen==0.8.4
+psutil==7.2.2
+manifold3d==3.4.1
+libigl==2.6.3
+coacd==1.0.14
+shapely==2.1.2
+pymupdf==1.28.2
+pyvista==0.48.0

@@ -1,0 +1,158 @@
+\section{Proofs for the volumetric application}
+\label{sec:vsfc}
+
+This appendix proves the guarantees that Section~\ref{main:construction} states for the first application. Subsection~\ref{sec:vsfc-source} establishes the Hilbert traversal's measure preservation, locality, and finite-order estimates. Subsection~\ref{sec:vsfc-ot} gives transport existence and the assumptions under which the map is continuous on the closed cube. Subsection~\ref{sec:vsfc-certificates} derives the ideal-path guarantees and the conditional finite-waypoint bounds. Subsection~\ref{sec:vsfc-semidiscrete} proves what the computed centroid path guarantees, including the hull-gap bounds used by decomposition. Two objects are kept apart throughout: the ideal transport map $\Phi$, and the computed centroids $\hat x_i$, whose equal cell masses do not imply pointwise closeness to $\Phi$. All results concern the tool path and its occupation measure.
+
+\subsection{Source and traversal}
+\label{sec:vsfc-source}
+\label{sec:vsfc-hilbert}
+
+The transported path is the geometry-first chain of Definition~\ref{def:cms} with
+\begin{equation}
+  \label{eq:vsfc-components}
+  \Xs=[0,1]^3,\qquad\mu_{\Xs}=\lambda^3,\qquad\xi=\Hil,
+\end{equation}
+where $\lambda^3$ is the uniform probability measure on the cube and $\Phi$ is the optimal-transport map defined below. Any lift $\Psi_g$ completes the tuple; the prototype stops at the tool path. The cube is connected, so Proposition~\ref{prop:topology-transitions} forces no transition; tool-path interruptions can still come from $\Sigma(\Phi)$, and machine interruptions from $B_\Psi$.
+
+For each order $m\geq1$, split the cube into $8^m$ dyadic cells of side $2^{-m}$ and the time interval into $8^m$ blocks of length $8^{-m}$. The recursive orders must be compatible: at each level, every cell is listed once, consecutive cells share a face, and the eight children of each cell are listed consecutively at the next level. Such constructions exist \cite{haverkort2017}, though not every three-dimensional Hilbert variant has them. The curve $\Hil$ \cite{hilbert1891,sagan1994,bader2013} has the following properties.
+\begin{enumerate}[label=(H\arabic*)]
+  \item \emph{Continuity and surjectivity.} $\Hil$ is continuous and passes through every point of the cube.
+  \item \emph{Measure preservation.} $\Hil{}_\#\lambda^1=\lambda^3$.
+  \item \emph{H\"older continuity.} $\|\Hil(t)-\Hil(t')\|\leq 2\sqrt6\,|t-t'|^{1/3}$.
+\end{enumerate}
+Continuity and surjectivity are standard for compatible recursive Hilbert traversals \cite{sagan1994,bader2013,haverkort2017}; measure preservation for the self-similar construction is stated in \cite[Section~2.4]{haverkort2017}. For the selected nested cell orders, it also follows directly: the assigned cell-centre maps $H_m$ converge uniformly to $\Hil$, and for every continuous $F$,
+\[
+  \int_I F(\Hil(t))\,dt
+  =\lim_m8^{-m}\sum_i F(u_i)
+  =\int_{[0,1]^3}F(u)\,du.
+\]
+The explicit constant in (H3) uses only face adjacency: if $8^{-(m+1)}\leq|t-t'|<8^{-m}$, the two points lie in the same or consecutive level-$m$ cells, whose union has diameter at most $\sqrt6\,2^{-m}\leq2\sqrt6\,|t-t'|^{1/3}$.
+
+
+The order-$m$ curve is the sequence of cell centres $u_1,\dots,u_{8^m}$; face adjacency gives $\|u_{i+1}-u_i\|=2^{-m}$. Sending the mass of each cell to its centre moves no mass farther than half a cell diagonal, so the empirical measure $\nu_m=8^{-m}\sum_i\delta_{u_i}$ satisfies
+\begin{equation}
+  \label{eq:vsfc-hilbert-coverage}
+  W_\infty(\nu_m,\lambda^3)\leq\tfrac{\sqrt3}{2}\,2^{-m}.
+\end{equation}
+These finite estimates need no transport regularity.
+
+\subsection{Transport existence and regularity}
+\label{sec:vsfc-ot}
+\label{app:proofs-convex-transport}
+
+The geometry map is the solution of the Monge problem with quadratic cost,
+\begin{equation}
+  \label{eq:vsfc-monge}
+  \Phi=\argmin_{T\colon T_\#\lambda^3=\mu_\Omega}\int_{[0,1]^3}\|u-T(u)\|^2\,du.
+\end{equation}
+\paragraph{Existence almost everywhere.}
+Since $\lambda^3$ has a density and both measures have compact support, Brenier's theorem gives a solution, unique $\lambda^3$-almost everywhere, of the form $\Phi=\nabla\varphi$ with $\varphi$ convex \cite{brenier1991,peyre2019computational}. This gives existence and uniqueness, not continuity. Without convexity, smooth densities still give a map that is smooth outside a closed singular set of measure zero \cite{dephilippis2015}. If $\Phi$ were discontinuous across a surface inside the cube, the Hilbert curve would cross it in every cell it cuts; with distinct one-sided limits at infinitely many crossings, $x$ would have infinitely many discontinuities and the lift of Definition~\ref{def:cms} would not apply. This is why a finite discontinuity set is a certificate, and why convexity matters. For the torus, the L-bracket, and the complex part, only this almost-everywhere map is available; neither non-convexity nor the jumps measured in Appendix~\ref{sec:experiments} proves a singular set.
+
+\paragraph{Continuity on the closed cube.}
+Suppose $\Omega$ is compact and convex with nonempty interior, and $\mu_\Omega=\rho\,\mathcal L^3|_\Omega$ with $0<a\leq\rho\leq b<\infty$ almost everywhere. Both densities are bounded above and below by positive constants on convex domains, so they define doubling measures, and the global regularity theory of Jhaveri and Savin supplies a H\"older-continuous representative $\Phi=\nabla\varphi$ on $[0,1]^3$ for some $0<\beta<1$ \cite[Theorem~1.1, Corollary~2.5, and Lemma~2.6]{jhaveri2022regularity}, extending Caffarelli's interior theory \cite{caffarelli1992}. Changing an almost-everywhere representative preserves the pushforward, and smooth or uniformly convex boundaries are not required. This covers uniform measures on full-dimensional convex boxes, cylinders, spheres, and convex polyhedra. It supplies no numerical value of the H\"older constant, and convexity alone is insufficient when the target density vanishes, is unbounded, or lives on a lower-dimensional set.
+
+\subsection{Path certificates}
+\label{sec:vsfc-certificates}
+\label{sec:vsfc-construction}
+
+Convex regularity gives the geometry stage the certificate
+\begin{equation}
+  \label{eq:vsfc-holder}
+  \|\Phi(u)-\Phi(u')\|\leq C_\Phi\|u-u'\|^\beta
+  \qquad\text{for all }u,u'\in[0,1]^3,
+\end{equation}
+with some $\beta\in(0,1]$ and finite but unknown $C_\Phi$. For a non-convex part it remains a hypothesis. An implementation produces waypoints $\hat x_i$ with error $\varepsilon=\max_i\|\hat x_i-\Phi(u_i)\|$.
+
+\begin{theorem}[Ideal-path and finite-waypoint guarantees]
+  \label{thm:vsfc-guarantees}
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Conditional bounds.} Under \eqref{eq:vsfc-holder}, the ideal path $x=\Phi\circ\Hil$ is continuous, $(\beta/3)$-H\"older, and has occupation measure $x_\#\lambda^1=\mu_\Omega$. Waypoints within $\varepsilon$ of $\Phi(u_i)$ satisfy
+          \begin{equation}
+            \label{eq:vsfc-bounds}
+            W_\infty\Bigl(8^{-m}\textstyle\sum_i\delta_{\hat x_i},\,\mu_\Omega\Bigr)
+            \leq C_\Phi\bigl(\tfrac{\sqrt3}{2}\bigr)^{\beta}2^{-\beta m}+\varepsilon,
+            \qquad
+            \|\hat x_{i+1}-\hat x_i\|\leq C_\Phi2^{-\beta m}+2\varepsilon.
+          \end{equation}
+          The first bound also bounds the target covering radius.
+    \item \emph{Convex setting.} If $\Omega$ is compact and convex with nonempty interior and its target density is bounded above and below by positive constants, then \eqref{eq:vsfc-holder} holds for some $\beta\in(0,1]$ and finite $C_\Phi$. Thus (i) applies: the ideal path has no tool-path interruption and exactly the prescribed occupation measure.
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  For (i), (H3) and Proposition~\ref{prop:composition}(ii) give H\"older continuity, and (H2) gives $x_\#\lambda^1=\Phi{}_\#\lambda^3=\mu_\Omega$. Apply Proposition~\ref{prop:composition}(i) to $\nu_m$ and $\Phi$, using \eqref{eq:vsfc-hilbert-coverage}; moving each waypoint by at most $\varepsilon$ adds $\varepsilon$. Corollary~\ref{cor:cms-covering-radius} supplies the covering-radius bound. Face adjacency gives $\|u_{i+1}-u_i\|=2^{-m}$, so \eqref{eq:vsfc-holder} bounds the ideal step by $C_\Phi2^{-\beta m}$, and the triangle inequality adds $2\varepsilon$. For (ii), the closed-domain regularity of Subsection~\ref{app:proofs-convex-transport} supplies \eqref{eq:vsfc-holder}.
+\end{proof}
+A lift with Lipschitz constant $L_\Psi$ on a region containing the waypoints bounds the joint steps by $L_\Psi(C_\Phi2^{-\beta m}+2\varepsilon)$.
+
+The finite bounds are conditional on $\varepsilon$, which is not certified for the computed path: the semi-discrete computation below certifies equal cell mass and the measured bound $D_m$ instead, and neither bounds $\varepsilon$.
+
+\subsection{Computed-path guarantees}
+\label{sec:vsfc-semidiscrete}
+
+\paragraph{Power cells and equal-mass optimality.}
+Let $\mu_\Omega=\rho\,dy$ with $\rho>0$ integrable on $\Omega$, let $u_1,\dots,u_n$ be the distinct sites of the order-$m$ curve, and let $\nu_m=n^{-1}\sum_i\delta_{u_i}$. For weights $\psi$, the power cell $P_i(\psi)=\{y\in\mathbb R^3:\|y-u_i\|^2-\psi_i\leq\|y-u_j\|^2-\psi_j\ \forall j\}$ is a convex polyhedron, and $L_i=P_i\cap\Omega$ is the Laguerre cell \eqref{eq:main-laguerre}. Two cells meet only where two power distances are equal, on a plane, so the cells tile $\Omega$ up to a null set. Weights satisfying \eqref{eq:main-equal-mass} make the map $y\mapsto u_i$ on $L_i$ the optimal transport from $\mu_\Omega$ to $\nu_m$ \cite{aurenhammer1998minkowski,merigot2011multiscale,levy2015numerical}. The waypoints are the centroids $\hat x_i$ of \eqref{eq:main-centroid}, and $D_m=\max_i\operatorname{diam}L_i$.
+
+\begin{proposition}[What equal cell mass controls]
+  \label{prop:sd-mass}
+  Let $\psi$ satisfy \eqref{eq:main-equal-mass} and $\hat\nu_m=n^{-1}\sum_i\delta_{\hat x_i}$.
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Distribution.} $W_\infty(\hat\nu_m,\mu_\Omega)\leq D_m$.
+    \item \emph{Order.} $\hat x_i\in P_i(\psi)$, so $\hat x_i$ is power-nearest to its own site $u_i$.
+    \item \emph{Waypoint density.} For every Borel set $A$, with $A^{+}=\{y:\dist(y,A)\leq D_m\}$ and $A^{-}=\{y:\dist(y,\mathbb R^3\setminus A)>D_m\}$,
+          \[
+            \mu_\Omega(A^{-})\leq\hat\nu_m(A)\leq\mu_\Omega(A^{+}),\qquad
+            \bigl|\hat\nu_m(A)-\mu_\Omega(A)\bigr|\leq\mu_\Omega(A^{+}\setminus A^{-}).
+          \]
+    \item \emph{Containment.} If $\Omega$ is convex, every $\hat x_i$ and every segment $[\hat x_i,\hat x_{i+1}]$ lies in $\Omega$.
+    \item \emph{Consistency.} If $\Omega=[0,1]^3$ and $\rho$ is constant, $\psi=0$ solves \eqref{eq:main-equal-mass}, each $L_i$ is the Hilbert cell of $u_i$, and $\hat x_i=u_i$.
+  \end{enumerate}
+\end{proposition}
+\begin{proof}
+  $\hat x_i$ is the mean of the probability measure $n\,\mu_\Omega|_{L_i}$, so it lies in the closed convex hull of $L_i$. For $y\in L_i$, the distance from $y$ to a point of that hull is at most the largest distance from $y$ to a point of $\overline{L_i}$, hence at most $\operatorname{diam}L_i\leq D_m$. (i) The coupling $\gamma=\sum_i\mu_\Omega|_{L_i}\otimes\delta_{\hat x_i}$ has first marginal $\mu_\Omega$, because the cells tile $\Omega$ up to a null set, and second marginal $\sum_i\mu_\Omega(L_i)\delta_{\hat x_i}=\hat\nu_m$ by \eqref{eq:main-equal-mass}; it moves no mass farther than $D_m$. (ii) $L_i\subseteq P_i$, which is closed and convex, so it contains the hull of $L_i$ and hence $\hat x_i$. (iii) If $\hat x_i\in A$, every point of $L_i$ is within $D_m$ of $\hat x_i$, so $L_i\subseteq A^{+}$; summing over these disjoint cells gives $\hat\nu_m(A)\leq\mu_\Omega(A^{+})$. If $L_i$ meets $A^{-}$ at some $y$, then $\|\hat x_i-y\|\leq D_m<\dist(y,\mathbb R^3\setminus A)$, so $\hat x_i\in A$; the cells meeting $A^{-}$ cover it, which gives $\mu_\Omega(A^{-})\leq\hat\nu_m(A)$. Since $A^{-}\subseteq A\subseteq A^{+}$, $\mu_\Omega(A)$ lies in the same interval, and the difference is at most its length. (iv) $L_i=P_i\cap\Omega$ is convex and contains $\hat x_i$; a convex $\Omega$ contains the segment between two of its points. (v) With $\psi=0$, the power cells are the Voronoi cells of the cube grid, that is, the Hilbert cells, each of volume $1/n$ and centroid $u_i$.
+\end{proof}
+A computed solution meets \eqref{eq:main-equal-mass} only to a relative tolerance $\tau$, and (i) and (iii) then hold up to $\tau$. Item (iii) makes the waypoint share of a region accurate only when the region is thick compared with $D_m$. Nothing in the proposition bounds $D_m$ or keeps $\hat x_i$ in a non-convex $\Omega$: a clipped cell can be non-convex or disconnected, its centroid can lie outside, and its diameter can stay large as $m$ grows. Nor does it bound $\varepsilon=\max_i\|\hat x_i-\Phi(u_i)\|$: on convex parts quantitative stability results give $L^2$ rates \cite{merigot2020quantitative}, but no pointwise rate is established here.
+
+\paragraph{Convex-hull gap.}
+\label{sec:vsfc-hull-gap}
+For a nonempty compact domain $K\subset\mathbb R^3$, define its \emph{convex-hull gap} by
+\begin{equation}
+  \label{eq:vsfc-hull-gap}
+  \delta_K=\sup_{z\in\operatorname{conv}(K)}\dist(z,K).
+\end{equation}
+Near-convexity means that $\delta_K$ is small at the geometric scale of interest. The domain $K$ may be the whole part or any compact subdomain.
+
+\begin{proposition}[Convex-hull gap bounds centroid-path excursions]
+  \label{prop:sd-hull-gap}
+  Let $K\subset\mathbb R^3$ be nonempty and compact, let $\rho\geq0$ be integrable on $K$, and let $L_1,\ldots,L_n\subseteq K$ be measurable cells with positive masses. Define
+  \[
+    \hat x_i=\frac{\int_{L_i}y\,\rho(y)\,dy}{\int_{L_i}\rho(y)\,dy}.
+  \]
+  Every $\hat x_i$ and every straight segment $[\hat x_i,\hat x_\ell]$ lie in $\operatorname{conv}(K)$ and have distance at most $\delta_K$ from $K$. In particular, for any polyline $\Gamma$ whose vertices are chosen from these centroids,
+  \begin{equation}
+    \label{eq:vsfc-hull-excursion}
+    \sup_{z\in\Gamma}\dist(z,K)\leq\delta_K,
+    \qquad \Gamma\subseteq K\oplus\bar B_{\delta_K}.
+  \end{equation}
+  If $K\subseteq\Omega$, the same bound holds for distance to $\Omega$. Moreover, $\delta_K=0$ if and only if $K$ is convex, in which case containment in $K$ is exact.
+\end{proposition}
+\begin{proof}
+  The convex hull $H=\operatorname{conv}(K)$ of a compact set in finite-dimensional space is compact, hence closed and convex. Each $\hat x_i$ is the mean of the normalised measure with density $\rho$ on $L_i$, whose support lies in $K$. Such a mean belongs to its closed convex hull: otherwise a separating hyperplane would put the mean strictly beyond all points of its support, contradicting the defining integral. Thus $\hat x_i\in H$. Convexity of $H$ contains every segment $[\hat x_i,\hat x_\ell]$ and therefore $\Gamma$. Equation~\eqref{eq:vsfc-hull-gap} bounds the distance to $K$ of every point in $H$, proving \eqref{eq:vsfc-hull-excursion}. If $K\subseteq\Omega$, then $\dist(z,\Omega)\leq\dist(z,K)$. Finally, convexity gives $H=K$ and $\delta_K=0$. Conversely, if $\delta_K=0$, every point of $H$ has zero distance to the closed set $K$, so $H\subseteq K$ and $H=K$.
+\end{proof}
+The bound does not require equal cell masses, convex cells, a particular visiting order, or regularity of the transport map, and it bounds excursion depth only. A volume ratio $|K|/|\operatorname{conv}(K)|$ cannot replace $\delta_K$, because a narrow indentation may have little missing volume and substantial depth.
+
+\paragraph{Partitioned parts.}
+\begin{corollary}[Independent transport on partitioned parts]
+  \label{cor:sd-piece-hull-gap}
+  Let $\Omega=\bigcup_{j=1}^k\Omega_j$ be a union of compact pieces with $\mu_\Omega(\Omega_j\cap\Omega_\ell)=0$ for $j\neq\ell$ and positive target-mass shares $w_j=\mu_\Omega(\Omega_j)$. For $\mu_\Omega=\rho\,dy$, run the algorithm independently on each piece using its conditional target measure
+  \[
+    \mu_j=w_j^{-1}\mu_\Omega|_{\Omega_j},
+  \]
+  whose density on $\Omega_j$ is $\rho/w_j$.
+  Give piece $j$ deposition-time share $w_j$. For an equal-mass solve with $n_j$ Hilbert sites, each local cell has target mass $1/n_j$ under $\mu_j$, corresponding to global mass and waypoint time share $w_j/n_j$. Let $\Gamma_j$ be its Hilbert-ordered centroid polyline and $\delta_j$ the hull gap \eqref{eq:vsfc-hull-gap} of $\Omega_j$. Then
+  \[
+    \sup_{z\in\Gamma_j}\dist(z,\Omega_j)\leq\delta_j.
+  \]
+  If $\Omega_j$ is convex, $\delta_j=0$ and $\Gamma_j\subseteq\Omega_j$.
+\end{corollary}
+\begin{proof}
+  Apply Proposition~\ref{prop:sd-hull-gap} with $K=\Omega_j$ and density $\rho/w_j$ to each local solve. The mass allocation follows from $\mu_\Omega=\sum_jw_j\mu_j$ and $\mu_\Omega(L_{ji})=w_j\mu_j(L_{ji})=w_j/n_j$ for each local cell $L_{ji}$.
+\end{proof}

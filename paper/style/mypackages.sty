@@ -1,0 +1,92 @@
+% ─────────────────────────────────────────────────────────────────────────────
+%  MYPACKAGES.STY
+%  Packages and document-level formatting/settings
+% ─────────────────────────────────────────────────────────────────────────────
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mypackages}[Packages and document settings]
+
+% ── Encoding & fonts ──────────────────────────────────────────────────────────
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{lmodern}
+\RequirePackage{microtype}
+
+% ── Page layout ───────────────────────────────────────────────────────────────
+\RequirePackage[
+  a4paper,
+  margin=1in,
+  headheight=14pt
+]{geometry}
+
+% ── Mathematics ───────────────────────────────────────────────────────────────
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{mathtools}
+\RequirePackage{bm}
+
+% ── Graphics & figures ────────────────────────────────────────────────────────
+% Allow PDF 1.7 figure assets; this is not a manuscript revision number.
+\pdfminorversion=7
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{float}
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+\RequirePackage{placeins}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\RequirePackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit, backgrounds}
+\RequirePackage{tikz-cd}
+% Cache each TikZ picture as a PDF in tikzcache/; it is redrawn only when its code changes (needs -shell-escape).
+\usetikzlibrary{external}
+% The prefix is relative to build/: the main job writes its .md5 files to the aux directory, and
+% each picture job is sent there too, so the cache lives only in build/tikzcache/.
+\tikzexternalize[prefix=tikzcache/, mode=convert with system call]
+\tikzset{external/system call={pdflatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -aux-directory=build -output-directory=build -jobname "\image" "\texsource"}}
+\tikzset{external/up to date check=md5}
+% tikz-cd diagrams cannot be externalized; they are small and drawn inline.
+\AddToHook{env/tikzcd/before}{\tikzexternaldisable}
+\AddToHook{env/tikzcd/after}{\tikzexternalenable}
+
+% ── Tables ────────────────────────────────────────────────────────────────────
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{colortbl}
+\definecolor{tableheadbg}{gray}{0.15}
+\definecolor{tablealtbg}{gray}{0.94}
+
+% One visual style for every table included in the submission.
+\newenvironment{papertable}{%
+  \begin{table}[htbp]
+  \centering\footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.12}%
+}{\end{table}}
+\newenvironment{papertabular}[1]{%
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}#1@{}}%
+}{\end{tabular*}}
+\newcommand{\papertablehead}[1]{\shortstack[r]{#1}}
+\captionsetup[table]{font=footnotesize,labelfont=bf,justification=justified,
+  singlelinecheck=false,skip=6pt}
+
+
+% ── Bibliography ──────────────────────────────────────────────────────────────
+\RequirePackage[numbers, sort&compress]{natbib}
+
+% ── Misc utilities ────────────────────────────────────────────────────────────
+\RequirePackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=2pt}
+\setlist[enumerate]{noitemsep, topsep=2pt}
+
+% ── Hyperlinks ────────────────────────────────────────────────────────────────
+\RequirePackage[
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = black
+]{hyperref}

@@ -1,0 +1,19 @@
+% ─────────────────────────────────────────────────────────────────────────────
+%  MYENV.STY
+%  Theorem-like environments
+% ─────────────────────────────────────────────────────────────────────────────
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{myenv}[Theorem environments]
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{Remark}

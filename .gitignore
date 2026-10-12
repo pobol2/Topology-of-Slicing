@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+/build/
+/dist/
+.ruff_cache/
+
+# Local only: Geogram source, builds and solver scratch; the CoACD cache
+.geogram/
+.cache/
+
+# LaTeX auxiliary files and TikZ cache (paper/main.pdf is kept)
+paper/build/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+
+# Test and LaTeX leftovers outside paper/build/
+.pytest_cache/
+*.synctex.gz

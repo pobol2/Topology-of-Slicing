@@ -1,0 +1,14 @@
+% Written by python -m mapchain tables from results/evaluation/pieces/torus_whole_vs_pieces.json.
+\begin{papertable}
+  \begin{papertabular}{lrrrrrrr}
+    \toprule
+    Path / domain & Inside & Ext.\ seg. & Ext.\ length & Depth & Coverage & CV & Radius \\
+    \midrule
+    Whole / torus & 99.98\% & 0.30\% & 0.51\% & $0.0317$ & $0.981$ & $0.392$ & $0.0244$ \\
+    Pieces / torus & 100.00\% & 0.00\% & 0.00\% & $0.0000$ & $0.978$ & $0.405$ & $0.0200$ \\
+    Pieces / assigned & 98.40\% & 5.21\% & 3.11\% & $0.0232$ & -- & -- & -- \\
+    \bottomrule
+  \end{papertabular}
+  \caption{Torus at the same budget: one whole-part path and eight piece paths, $32\,768$ waypoints each. \emph{Torus} measures against the whole object, \emph{assigned} against each path's own piece. ``Inside'' is the percentage of waypoints inside the evaluation domain; ``Ext.\ seg.'' and ``Ext.\ length'' are the percentages of exterior segments and exterior path length. Depth is the deepest sampled excursion; radius is the sampled covering radius. Distances are in normalised units; coverage and the coefficient of variation (CV) are defined in Appendix~\ref{sec:experiments-setup}. See Appendix~\ref{sec:experiments-torus-comparison} for the comparison protocol.}
+  \label{tab:torus-whole-vs-pieces}
+\end{papertable}

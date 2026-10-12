@@ -1,0 +1,26 @@
+% Written by python -m mapchain tables from results/evaluation/whole_part.
+\begin{papertable}
+  \begin{papertabular}{lrrrrrrrrrr}
+    \toprule
+    Part & $m$ & Inside & \papertablehead{Ext.\\seg.} & \papertablehead{Ext.\\length} & Depth & \papertablehead{Ext.\\runs} & Jumps & $D_m$ & \papertablehead{Cover.\\radius} & \papertablehead{Max.\\step} \\
+    \midrule
+    Cylinder & 4 & $1.000$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0.120$ & $0.047$ & $0.069$ \\
+    & 5 & $1.000$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0.065$ & $0.023$ & $0.039$ \\
+    & 6 & $1.000$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0.035$ & $0.012$ & $0.023$ \\
+    Sphere & 4 & $1.000$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0.120$ & $0.043$ & $0.073$ \\
+    & 5 & $1.000$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0.066$ & $0.022$ & $0.043$ \\
+    & 6 & $1.000$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0.036$ & $0.012$ & $0.025$ \\
+    Torus & 4 & $1.000$ & $<0.001$ & $0.001$ & $0.029$ & $1$ & $0$ & $0.179$ & $0.039$ & $0.205$ \\
+    & 5 & $1.000$ & $0.003$ & $0.004$ & $0.032$ & $53$ & $1$ & $0.105$ & $0.024$ & $0.198$ \\
+    & 6 & $0.999$ & $0.002$ & $0.008$ & $0.032$ & $241$ & $255$ & $0.092$ & $0.014$ & $0.195$ \\
+    L-bracket & 4 & $0.973$ & $0.049$ & $0.182$ & $0.264$ & $53$ & $97$ & $0.858$ & $0.062$ & $0.396$ \\
+    & 5 & $0.985$ & $0.026$ & $0.169$ & $0.280$ & $224$ & $477$ & $0.853$ & $0.033$ & $0.405$ \\
+    & 6 & $0.993$ & $0.012$ & $0.157$ & $0.289$ & $836$ & $2201$ & $0.850$ & $0.017$ & $0.412$ \\
+    Complex part & 4 & $0.988$ & $0.038$ & $0.058$ & $0.045$ & $95$ & $0$ & $0.197$ & $0.041$ & $0.166$ \\
+    & 5 & $0.998$ & $0.016$ & $0.053$ & $0.089$ & $323$ & $174$ & $0.167$ & $0.022$ & $0.182$ \\
+    & 6 & $0.999$ & $0.007$ & $0.033$ & $0.083$ & $1103$ & $761$ & $0.165$ & $0.012$ & $0.181$ \\
+    \bottomrule
+  \end{papertabular}
+  \caption{All fifteen uniform runs, at $8^m$ waypoints (4096, $32\,768$, and $262\,144$). ``Inside'' is the fraction of waypoints inside $\Omega$; ``Ext.\ seg.'' and ``Ext.\ length'' are the fractions of exterior segments and exterior path length; ``Depth'' is the deepest sampled excursion. Distances ($D_m$, depth, covering radius, and maximum step) are in normalised units (Appendix~\ref{sec:implementation}); exterior runs and jumps are counts.}
+  \label{tab:experiments-geometries}
+\end{papertable}

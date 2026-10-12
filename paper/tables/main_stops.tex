@@ -1,0 +1,18 @@
+% Written by python -m mapchain tables from results/evaluation/raster and results/evaluation/whole_part.
+\begin{papertable}
+  \begin{papertabular}{lrrr}
+    \toprule
+    & \multicolumn{2}{c}{Layered raster} & Transported path \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-4}
+    Part & Between layers & All travel & Exterior runs \\
+    \midrule
+    Cylinder & 13 / 27 / 57 & 97 / 419 / 2029 & 0 / 0 / 0 \\
+    Sphere & 13 / 27 / 57 & 101 / 371 / 1533 & 0 / 0 / 0 \\
+    Torus & 5 / 11 / 23 & 69 / 271 / 1163 & 1 / 53 / 241 \\
+    L-bracket & 3 / 9 / 19 & 3 / 19 / 19 & 53 / 224 / 836 \\
+    Complex part & 5 / 11 / 23 & 37 / 155 / 586 & 95 / 323 / 1103 \\
+    \bottomrule
+  \end{papertabular}
+  \caption{Stops at Hilbert orders 4 / 5 / 6. Most raster travel lies within layers, where a better in-layer planner could remove some of it; only the stops between layers are forced.}
+  \label{tab:main-stops}
+\end{papertable}

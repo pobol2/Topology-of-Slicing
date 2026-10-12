@@ -1,0 +1,74 @@
+\section{Second application: changing the construction order}
+\label{main:next}
+
+The first application removed interruptions forced at the source. A connected source can still lead to interruptions at the machine. If obstacles divide the robot's safe postures into separate families, a tool path that passes between their regions forces posture resets, by the same counting argument. Which link fixes that count depends on the order in which the links are built. Every reviewed slicer constructs the tool path first. Geometry-first slicing fixes $x=\Phi\circ\xi$, which certifies the occupation measure through $\Phi$, and then seeks a lift $q=\Psi_g[x]$ that follows it. Robot-aware methods do plan with machine constraints, but they take a geometric path or geometric elements as the input to that planning \cite{chalvin2020layer,schmitz2021robot,zhang2021singularity,huang2018choreo}, so obstacles, singularities, and posture changes are resolved for a geometry that is already fixed. Separating the geometry map from the lift exposes the order of construction as a design freedom of the chain. Reversing it is not a permutation of the same maps: $\Psi_g$ lifts a prescribed tool path, whereas a machine-first construction needs a new map $\Psi_k$ from the source into admissible configurations, and derives the tool path through forward kinematics (FK; Figure~\ref{fig:kin-order}):
+\begin{equation}
+  \label{eq:kinematicsfirst}
+  q=\Psi_k\circ\xi,\qquad x=\FK\circ q,
+\end{equation}
+where $\Psi_k$ takes values in the admissible configurations $\Qfree$ and $\FK$ returns the tool position. Guarantees and obligations trade places. Static feasibility holds by construction, while coverage and the prescribed occupation measure, $x_\#\lambda^1=\mu_\Omega$, which geometry-first obtains from $\Phi$, become obligations. Configuration-first coverage exists in robotics: Yang et~al.\ \cite{yang2020coverage} plan coverage through configuration-space cells to minimise discontinuities. The framework adds the prescribed deposition measure and the link to source decomposition.
+
+\begin{figure}[tbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \begin{tikzcd}[column sep=1.8cm, row sep=1.1cm, ampersand replacement=\&]
+      \Xs \arrow[r, "\Phi"] \arrow[dr, dashed, thin] \& \Omega \arrow[d, "\Psi_g"] \\
+      \& \Qs
+    \end{tikzcd}
+
+    {\small(a) Geometry first\par}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \begin{tikzcd}[column sep=1.8cm, row sep=1.1cm, ampersand replacement=\&]
+      \Xs \arrow[r, "\Psi_k"] \arrow[dr, dashed, thin] \& \Qfree \arrow[d, "\FK"] \\
+      \& \Omega
+    \end{tikzcd}
+
+    {\small(b) Kinematics first\par}
+  \end{minipage}
+
+  \caption{The two construction orders. (a) Geometry first: construct the tool path, then lift it to machine motion. (b) Kinematics first: construct admissible machine motion, then derive the tool path through forward kinematics; covering the target $\Omega$ with the prescribed measure remains an obligation. Vertices denote spaces and arrows indicate construction stages; dashed diagonals show the resulting composition. The lift $\Psi_g$ acts on whole paths.}
+  \label{fig:kin-order}
+\end{figure}
+
+\paragraph{The density obligation.}
+\label{sec:kinematics-density}
+Let $\Psi_k$ map into a regular submanifold $S\subseteq\Qfree$, and let $f=\FK|_S$ be injective on a regular chart of $S$, with volume Jacobian $J_S$ ($J_S=|\det Df|$ in equal dimension). By change of variables, a configuration density $a$ deposits the prescribed density exactly when
+\[
+  a(q)=\rho\bigl(f(q)\bigr)\,J_S(q).
+\]
+Uniform configuration density therefore need not give uniform deposition density. Where patches overlap, the target mass is partitioned first and each patch carries its share; multiple preimages must be summed rather than treated as one branch.
+
+\subsection{Posture sheets guide the source split}
+\label{sec:kin-sheets}
+Once the order is reversed, the robot rather than the target can guide how the source is split, as the part's convexity guided it in the first application (Section~\ref{main:decomposed}). Call the path components of the safe fibre space $F=\{(x,q)\in\Omega\times\Qfree:\FK(q)=x\}$ \emph{sheets}, with workspace projections $\Omega_i$; they are related to t-connectivity \cite{wenger1991freeworkspace} and aspects \cite{borrel1986aspects}. A \emph{posture switch} occurs where the one-sided lifted pairs $(x(t^\pm),q(t^\pm))$ lie in different sheets; a discontinuity within one sheet is not counted. A continuous stretch of a lifted path stays in one sheet, so a switch is the robot's analogue of a source transition. If a region $A$ is reachable only in sheet~1 and a region $B$ only in sheet~2, every passage of the tool path from $A$ to $B$ forces a switch, whatever lift is chosen.
+
+The construction makes the split explicit. (1) Cover $\Omega$ by patches $P_i$, each inside the projection of one sheet. (2) Construct and validate a continuous safe lift $\sigma_i\colon P_i\to\Qfree$ in that sheet. (3) Partition the target mass among the patches, $w_i=\mu_\Omega(P_i)$, and give each patch its conditional density. (4) Traverse each patch with its own source piece, $q=\sigma_i\circ x_i$, and visit each patch once.
+
+\begin{proposition}[Sheets force switches; patches attain the minimum]
+  \label{prop:sheets-switches}
+  Let $\supp\mu_\Omega=\Omega$ and let $c$ be the fewest sheets whose projections cover $\Omega$. (i) Every plan with $x_\#\lambda^1=\mu_\Omega$, finitely many discontinuities, and safe one-sided limits makes at least $c-1$ switches. (ii) If $\Omega$ is covered by $c$ patches, each traversed with its share of $\mu_\Omega$ by a continuous safe lift in one sheet, visiting each patch once attains $c-1$. In particular, if two sheets are necessary and two such patches cover $\Omega$, one switch is necessary and sufficient.
+\end{proposition}
+Appendix~\ref{app:kin-proof} gives the proof. Two distinctions bound the claim. Sheet coverage is not lift existence: a sheet whose projection covers a patch need not supply a continuous lift over it, so the lifts $\sigma_i$ are hypotheses to validate. And a counted switch is an event in deposition time, whereas the physical repositioning between postures, with the flow off, is a separate collision-free motion that must be planned and checked. For a fixed path, the same argument fixes the count: with two sheets whose closed projections admit continuous sections, the minimum number of switches equals the number of alternations between $\Omega_1\setminus\Omega_2$ and $\Omega_2\setminus\Omega_1$, each switch being placed in the overlap. A geometry-first slicer inherits this count from its path; a better lift cannot lower it, just as a better order of source pieces cannot lower the number of transitions.
+
+\subsection{A three-link experiment}
+\label{sec:kinematics-example}
+\paragraph{Setup.}
+A planar arm with three revolute joints deposits on an annular sector among three disk obstacles (Figure~\ref{fig:sheets-3r}(a)). Sampling the safe fibre gives two endpoint-anchored families, labelled Down and Up, whose projections overlap only for $\varphi\in[-4.4^\circ,12.9^\circ]$, so neither covers $\Omega$ alone and $c=2$ in the sampled model. Both pipelines use the same $4^m$ order-$m$ Hilbert waypoints at orders $m=2,3,4$, and two target densities: uniform, and a gradient density. \emph{Geometry-first} is our baseline. It follows the Hilbert path over the whole chart, solves constrained inverse kinematics at each collocation point, and changes posture only when the current family becomes unavailable. \emph{Kinematics-first} has a one-time preparation, which builds two patches, Down and Up, each with a stored, certified piecewise-affine joint-pose map, and a per-request step, which splits the source square at the target cut $4.25^\circ$ into whole Hilbert rows per patch and reads joint poses from the stored map without any inverse-kinematics solve. The two groups are joined through a common handoff point in the overlap, where one posture reset occurs (Figure~\ref{fig:sheets-3r}(b,d)). The \emph{switch count} is the number of observed resets; the \emph{coverage error} is the largest distance from a target grid to the sampled depositing path; the \emph{density error} is the total-variation distance between target shares and waypoint shares on $4\times8$ area bins. Appendix~\ref{app:kin-setup} gives the geometry, charts, preparation, certification, measurements, and timing protocol.
+
+\paragraph{Results.}
+Kinematics-first made one reset in all six requests and geometry-first made two, which equals the minimum for its fixed Hilbert path in the sampled availability model (Table~\ref{tab:sheets-3r-results}). In that model, the bound $c-1=1$ is attained in this example. The second geometry-first reset is a property of its path, not of its solver, and the reduction to one comes from the sheet-guided split of the source. Coverage errors are comparable and shrink with the order (at order four, $0.061$ against $0.062$ for uniform and $0.114$ against $0.117$ for gradient density). Density errors coincide for uniform density at every order. For the gradient density, they are slightly higher for kinematics-first ($0.188$ against $0.172$ at order three and $0.062$ against $0.043$ at order four), consistent with the row rounding. Kinematics-first preparation took $14.2$~s, after which each request took $5$ to $39$~ms to plan and certify, against $2.34$ to $9.95$~s for geometry-first. The speedup comes from reusing the prepared maps instead of solving inverse kinematics per request. Over the six requests in sequence, including preparation and the shared fibre analysis, kinematics-first's cumulative time falls below geometry-first's at the fourth request ($22.4$ against $22.7$~s) and ends at $22.5$ against $42.5$~s.
+
+The example completes the parallel with the first application: in both, the forced interruptions are counted by the path components at one link, and a source split matched to those components reaches the minimum: none for a connected volume on convex parts and one for two sheets.
+
+\input{tables/sheets_3r_results}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.90\textwidth]{figures/three_link_posture_comparison.pdf}
+  \caption{Three-link experiment at order four with uniform density. (a) Arm, obstacles, target sector, and the Down (blue) and Up (orange) postures at one tool point. (b) Robot-guided split: sampled availability of the two families over the chart, the prepared patch domains, and the assigned regions split at $4.25^\circ$. (c) Geometry-first path, shaded by sampled availability (one family or both), with two resets. (d) Kinematics-first path, shaded by assigned patch: patch~1 is completed, followed by one reset, then patch~2. Red crosses mark discrete, uncertified posture resets. The certified connectors to and from the handoff point are not drawn.}
+  \label{fig:sheets-3r}
+\end{figure}
+\FloatBarrier

@@ -1,0 +1,46 @@
+\section{Evaluating the first application}
+\label{main:evidence}
+
+The framework makes three predictions about the first application, each naming a link: changing the source removes the transitions between layers; the failures that remain belong to the geometry map; and decomposition repairs them up to each piece's hull gap. A computational demonstration tests them in that order. Its scope is stated in Section~\ref{sec:introduction}.
+
+The implementation computes the semi-discrete map of Section~\ref{main:semidiscrete} with the solver of Geogram \cite{levy2015numerical,kitagawa2019convergence}, on parts meshed into tetrahedra \cite{si2015tetgen}, solving coarse to fine. The five parts are a cylinder, a sphere, a solid torus, an L-bracket with a reentrant edge, and a complex part consisting of a block with several holes and a boss (genus three). Every run, on these parts at orders $m=4,5,6$ ($4096$ to $262\,144$ waypoints), met the equal-mass condition to a relative tolerance of $10^{-6}$. A stop is counted wherever a path would have to be executed as travel: for the layered raster baseline, each travel move; for the transported path, each maximal \emph{exterior run} of segments that leave the part. Steps longer than five times the mean are reported separately as \emph{jumps}. Appendix~\ref{sec:implementation} gives the meshing, solver settings, and acceptance checks; Appendix~\ref{sec:experiments-setup} defines the metrics, evaluation samples, and the layered baseline; and Table~\ref{tab:experiments-geometries} in Appendix~\ref{sec:experiments-geometries} reports all fifteen runs.
+
+\paragraph{A connected source removes the stops on convex parts.}
+This is the central result of the first application. Figure~\ref{fig:layer-stops} shows the mechanism on a cube at order two; the counts below are for the cylinder. The decisive count is the number of stops between layers, which Proposition~\ref{prop:topology-transitions} forces. A layered raster makes 13, 27, and 57 of them at orders 4, 5, and 6, roughly doubling with the number of layers (Table~\ref{tab:main-stops}). The transported path has no layers to stop between, and no exterior run at any tested order. That zero follows by construction on a convex part; the additional findings are that the path also has no jump, and that its longest step shrinks with the order (from $0.069$ to $0.023$ on the cylinder). Changing the source thus removes a limit that grows with every refinement of the layered chain.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphicsorbox{figures/cube_layer_interruptions.pdf}{0.85\textwidth}{5.5cm}
+  \caption{Layer changes on a cube at order two (64 waypoints). (a) Layered raster on the same cell centres: dashed red segments mark the three layer changes, each requiring a stop. (b) Computed transported path: it changes height throughout (teal segments mark mostly vertical steps), so there is no layer boundary to stop at, and it has no exterior run. The circle marks the start and the square the end. Stop counts under refinement are in Table~\ref{tab:main-stops}.}
+  \label{fig:layer-stops}
+\end{figure}
+
+\input{tables/main_stops}
+
+\paragraph{The distribution is controlled cell by cell.}
+Every accepted path assigns each waypoint the same target mass, so each waypoint stands for one Hilbert time block. On the convex parts the computable bound $D_m$ roughly halves with each order, from $0.120$ to $0.065$ and $0.035$ on the cylinder, and the covering radius follows, from $0.047$ to $0.023$ and $0.012$. This is consistent with the $2^{-\beta m}$ term of \eqref{eq:main-bounds}, though three orders do not determine $\beta$.
+
+\paragraph{On non-convex parts, the failures lie in the geometry map.}
+As the framework predicts, the source stays connected and the failures come from non-convex clipped cells. On the torus at order four, every waypoint is inside the part, but one segment leaves the part across the hole. The L-bracket and complex part retain more exterior segments: at order four, $4.9\%$ and $3.8\%$ of their segments leave the part, and $97.3\%$ and $98.8\%$ of their waypoints lie inside (Table~\ref{tab:experiments-geometries}). Figure~\ref{fig:containment-repair} shows both mechanisms at order four. On the L-bracket, cells near the reentrant edge straddle the empty region between the arms and their centroids lie in it; on the torus, the one exterior segment joins two interior centroids across the hole, which is also how most exterior segments of the complex part arise. Appendix~\ref{sec:experiments-resolution} separates these two mechanisms by segment endpoints. The cost is real: the torus has fewer exterior runs than the raster has travel moves, but the L-bracket and complex part have more (Table~\ref{tab:main-stops}).
+
+\begin{figure}[tb]
+  \centering
+  \includegraphicsorbox{figures/nonconvex_containment_decomposition.pdf}{\textwidth}{7cm}
+  \caption{Containment failures and their repair, computed at order four (plan views; red marks the path outside the part). Left: whole-part paths (4096 waypoints). Middle: close-up of the boxed region; thick segments join consecutive waypoints (dots). On the L-bracket, an exterior run passes through a waypoint in the empty region beside the reentrant corner. On the torus, the single exterior segment joins two interior waypoints across the hole. Right: piece paths, with one colour per piece: the two convex boxes of the L-bracket at order four, and eight automatic torus pieces at order three (4096 waypoints in total, the whole-part budget; Appendix~\ref{sec:experiments-torus-figure}). No piece-path segment leaves the part.}
+  \label{fig:containment-repair}
+\end{figure}
+
+\paragraph{Refinement reduces the excursions but does not remove them.}
+Between orders four and six, the fraction of exterior segments falls from $0.049$ to $0.012$ on the L-bracket and from $0.038$ to $0.007$ on the complex part, but the deepest excursions persist (Table~\ref{tab:experiments-geometries}; Appendix~\ref{sec:experiments-resolution}). Most cells shrink with the order, but those clipped by holes and reentrant edges stay large: on the L-bracket, $D_m$ stays near $0.85$. Refinement does not make the target convex. This persistence is what motivates decomposition.
+
+\paragraph{Decomposition restores containment up to each piece's hull gap.}
+We apply the same traversal and solver independently to the two boxes of the L-bracket and to an automatic partition of the torus into eight pieces. All ten local solves pass. The result has two parts, matching the two kinds of excursion of Section~\ref{main:decomposed}.
+
+Against each \emph{assigned piece}, the bound holds. The two convex boxes give full containment, as Proposition~\ref{prop:sd-hull-gap} guarantees (Figure~\ref{fig:containment-repair}, top right). The automatic pieces are not exactly convex: $5.21\%$ of the torus piece-path segments leave their own piece, but every excursion stays below that piece's computed hull-gap bound (Table~\ref{tab:decomposition}). Appendix~\ref{sec:experiments-pieces-independent} gives the partition procedure, the numerical hull-gap evaluation, and the mass-weighted same-budget comparison.
+
+Against the \emph{whole object}, the excursions disappear in the torus comparison. The crossings above enter neighbouring pieces, not empty space. At the same budget of $32\,768$ waypoints, the whole-part path has 99 segments leaving the torus, while the piece paths have none, with similar coverage (Table~\ref{tab:torus-whole-vs-pieces}).
+
+\input{tables/torus_whole_vs_pieces}
+
+Each outcome thus sits in the link the framework assigned it: the transitions between layers in the source, the containment failures in the geometry map. Decomposition brings back a fixed number of components, $k$, rather than one that grows with resolution. The first application kept the usual order of construction, geometry first, machine second. The second changes that order, because the next source of forced interruptions lies in the machine.
+\FloatBarrier

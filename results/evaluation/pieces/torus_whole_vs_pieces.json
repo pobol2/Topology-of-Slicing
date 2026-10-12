@@ -1,0 +1,683 @@
+{
+  "sources": {
+    "whole": "results/evaluation/whole_part/torus_m5.json",
+    "pieces": "results/volumetric/decomposition/torus"
+  },
+  "definitions": {
+    "sampler": "mapchain.volumetric.decomposition.segment_samples: ceil(length/0.001)+1 samples per segment, endpoints included",
+    "polygonal_torus": "normalised models/torus.stl, the domain of both solves; outside if winding < 1/2 and distance > 1e-9",
+    "analytic_torus": "exact torus of the saved whole-part metrics (mapchain.evaluation.metrics.surface_distances)",
+    "assigned_piece": "closed surface of the piece Omega_j used by its own solve",
+    "containment": "waypoint fraction inside; mass_weighted_containment weights piece j by w_j",
+    "exterior_length_fraction": "sum over segments of length x outside share of its samples, over total path length",
+    "max_excursion": "largest sampled distance outside (not a bound)",
+    "sampled_scope": "exterior segments, exterior length and excursion are evaluated at the samples only: a value of zero means no sample was classified outside, not that the polyline is proven to lie in the solid; waypoint containment classifies the waypoints themselves with the same membership test",
+    "scope": "this comparison only: the saved whole-part order-5 torus run and the saved eight-piece CoACD order-4 torus run; no conclusion is drawn for other parts, partitions, orders or settings",
+    "hull_gap": "per piece, copied from the decomposition record with its conditions (pieces[].hull_gap.conditional_on)",
+    "assigned_piece_crossings": "a piece path segment with samples outside its assigned piece Omega_j; it lies in a region whose mass is assigned to another piece, so that piece and its path are no longer the only deposit there. Its effect on local deposition density, overlap and sequencing is not measured here",
+    "coverage": "weighted_cloud on the 10^4 evaluation samples, 20^3 voxels: occupancy, mass-weighted CV, weighted chamfer; covering radius = max sample-to-waypoint distance",
+    "weights": "each waypoint carries its cell mass: 1/32768 (whole), w_j/4096 (piece j)",
+    "paths": "piece paths are independent; no segment joins two pieces"
+  },
+  "validation": {
+    "inputs": {
+      "model_sha256": "31c11cdd3075f44910aa120a209b077cbc17d196c451fe690bef571c123b58d5",
+      "whole_run_model_hash_matches": true,
+      "piece_run_model_hash_matches": true,
+      "piece_run_surface_equals_current_normalised_model": true,
+      "tetgen_counts_match": true,
+      "tetgen_settings_match": true,
+      "tetrahedral_mesh_identity": "unverified: the whole-part run saved only counts and settings; the piece run saved its arrays (geometry.npz)",
+      "evaluation_samples": {
+        "count": 10000,
+        "sha256": "463c6278bc4e4ac3e1a2159296091d3437c50fc4d8373e6846add6f3896284e3",
+        "use": "every coverage metric of both paths in this comparison is computed on this array"
+      },
+      "same_waypoint_count": true,
+      "piece_weights_match_tetrahedral_volumes": 0.0,
+      "piece_weights_sum": 1.0000000000000009,
+      "all_piece_solves_accepted": true,
+      "whole_solve_accepted": true
+    },
+    "whole_reproduces_saved_metrics": {
+      "exterior_segments": true,
+      "exterior_length_fraction": true,
+      "max_excursion": true,
+      "samples": true,
+      "containment": true,
+      "coverage": true,
+      "coverage_cv": true,
+      "chamfer": true,
+      "covering_radius": true
+    },
+    "pieces_reproduce_saved_assigned_measurements": true,
+    "torus_exterior_implies_assigned_exterior": {
+      "segments": true,
+      "waypoints": true
+    },
+    "passed": true
+  },
+  "comparison": {
+    "whole_m5": {
+      "polygonal_torus": {
+        "waypoints": 32768,
+        "waypoints_inside": 32760,
+        "segments": 32767,
+        "exterior_segments": 99,
+        "exterior_arc_length": 3.502962915318937,
+        "path_length": 688.8919024619698,
+        "max_excursion": 0.03174277128658298,
+        "samples": 737709,
+        "containment": 0.999755859375,
+        "mass_weighted_containment": 0.999755859375,
+        "exterior_segment_fraction": 0.003021332438123722,
+        "exterior_length_fraction": 0.00508492392318738
+      },
+      "analytic_torus": {
+        "waypoints": 32768,
+        "waypoints_inside": 32760,
+        "segments": 32767,
+        "exterior_segments": 99,
+        "exterior_arc_length": 2.982269433541026,
+        "path_length": 688.8919024619698,
+        "max_excursion": 0.03152641978219358,
+        "samples": 737709,
+        "containment": 0.999755859375,
+        "mass_weighted_containment": 0.999755859375,
+        "exterior_segment_fraction": 0.003021332438123722,
+        "exterior_length_fraction": 0.004329081852875548
+      },
+      "coverage": {
+        "coverage": 0.9810874704491725,
+        "coverage_cv": 0.3917520221798924,
+        "chamfer": 0.011959736463776507,
+        "total_time_weight": 1.0,
+        "target_occupied_voxel_count": 1692,
+        "covering_radius": 0.024394887170141804
+      }
+    },
+    "pieces_m4": {
+      "polygonal_torus": {
+        "waypoints": 32768,
+        "waypoints_inside": 32768,
+        "segments": 32760,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 646.437241685022,
+        "max_excursion": 0.0,
+        "samples": 695674,
+        "mass_weighted_containment": 1.0000000000000009,
+        "containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 32768,
+        "waypoints_inside": 32768,
+        "segments": 32760,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 646.437241685022,
+        "max_excursion": 0.0,
+        "samples": 695674,
+        "mass_weighted_containment": 1.0000000000000009,
+        "containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "assigned_piece": {
+        "waypoints": 32768,
+        "waypoints_inside": 32244,
+        "segments": 32760,
+        "exterior_segments": 1707,
+        "exterior_arc_length": 20.12663550585438,
+        "path_length": 646.437241685022,
+        "max_excursion": 0.02317967018611412,
+        "samples": 695674,
+        "mass_weighted_containment": 0.9912434846346367,
+        "containment": 0.9840087890625,
+        "exterior_segment_fraction": 0.05210622710622711,
+        "exterior_length_fraction": 0.031134709153500674
+      },
+      "coverage": {
+        "coverage": 0.9775413711583925,
+        "coverage_cv": 0.4045312912666113,
+        "chamfer": 0.011964463357418728,
+        "total_time_weight": 1.0,
+        "target_occupied_voxel_count": 1692,
+        "covering_radius": 0.019967608380441204
+      },
+      "coverage_ignoring_piece_weights": {
+        "coverage": 0.9775413711583925,
+        "coverage_cv": 0.8387622598465935,
+        "chamfer": 0.011940709814769506,
+        "total_time_weight": 1.0,
+        "target_occupied_voxel_count": 1692,
+        "covering_radius": 0.019967608380441204
+      }
+    }
+  },
+  "pieces": [
+    {
+      "piece": "p0",
+      "mass_share": 0.050710150921552434,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 3995,
+        "segments": 4095,
+        "exterior_segments": 322,
+        "exterior_arc_length": 3.8859974699036703,
+        "path_length": 69.04140886988347,
+        "max_excursion": 0.019138802417948342,
+        "samples": 75279,
+        "containment": 0.975341796875,
+        "mass_weighted_containment": 0.975341796875,
+        "exterior_segment_fraction": 0.07863247863247863,
+        "exterior_length_fraction": 0.0562850256608651
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 69.04140886988347,
+        "max_excursion": 0.0,
+        "samples": 75279,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 69.04140886988347,
+        "max_excursion": 0.0,
+        "samples": 75279,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04994503258155496,
+        "lower_bound": 0.04885919274122775,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p1",
+      "mass_share": 0.05154933829513064,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 4002,
+        "segments": 4095,
+        "exterior_segments": 308,
+        "exterior_arc_length": 3.77801488067269,
+        "path_length": 69.43272365051035,
+        "max_excursion": 0.01941419706652494,
+        "samples": 75627,
+        "containment": 0.97705078125,
+        "mass_weighted_containment": 0.97705078125,
+        "exterior_segment_fraction": 0.07521367521367521,
+        "exterior_length_fraction": 0.05441259800910778
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 69.43272365051035,
+        "max_excursion": 0.0,
+        "samples": 75627,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 69.43272365051035,
+        "max_excursion": 0.0,
+        "samples": 75627,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04597069857103109,
+        "lower_bound": 0.04457902457635455,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p2",
+      "mass_share": 0.2060407134009352,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 4074,
+        "segments": 4095,
+        "exterior_segments": 82,
+        "exterior_arc_length": 0.8956511780428895,
+        "path_length": 93.71674739622283,
+        "max_excursion": 0.01589697049995011,
+        "samples": 99870,
+        "containment": 0.99462890625,
+        "mass_weighted_containment": 0.99462890625,
+        "exterior_segment_fraction": 0.020024420024420026,
+        "exterior_length_fraction": 0.009557002381401341
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 93.71674739622283,
+        "max_excursion": 0.0,
+        "samples": 99870,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 93.71674739622283,
+        "max_excursion": 0.0,
+        "samples": 99870,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04415358892826948,
+        "lower_bound": 0.04231989693877423,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p3",
+      "mass_share": 0.19778688364123703,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 4078,
+        "segments": 4095,
+        "exterior_segments": 81,
+        "exterior_arc_length": 0.8431762740961655,
+        "path_length": 92.24649555547853,
+        "max_excursion": 0.00931719297343142,
+        "samples": 98414,
+        "containment": 0.99560546875,
+        "mass_weighted_containment": 0.99560546875,
+        "exterior_segment_fraction": 0.01978021978021978,
+        "exterior_length_fraction": 0.009140469445682798
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 92.24649555547853,
+        "max_excursion": 0.0,
+        "samples": 98414,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 92.24649555547853,
+        "max_excursion": 0.0,
+        "samples": 98414,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.05620915716411077,
+        "lower_bound": 0.054615743345426154,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p4",
+      "mass_share": 0.2059210756347031,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 4076,
+        "segments": 4095,
+        "exterior_segments": 63,
+        "exterior_arc_length": 0.5703961654068468,
+        "path_length": 93.37067686273028,
+        "max_excursion": 0.011570248312787568,
+        "samples": 99535,
+        "containment": 0.9951171875,
+        "mass_weighted_containment": 0.9951171875,
+        "exterior_segment_fraction": 0.015384615384615385,
+        "exterior_length_fraction": 0.006108943241842616
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 93.37067686273028,
+        "max_excursion": 0.0,
+        "samples": 99535,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 93.37067686273028,
+        "max_excursion": 0.0,
+        "samples": 99535,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.05168231874853266,
+        "lower_bound": 0.04985220570068547,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p5",
+      "mass_share": 0.04483830108873136,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 3960,
+        "segments": 4095,
+        "exterior_segments": 417,
+        "exterior_arc_length": 5.299804594476208,
+        "path_length": 68.64204991167693,
+        "max_excursion": 0.02317967018611412,
+        "samples": 74707,
+        "containment": 0.966796875,
+        "mass_weighted_containment": 0.966796875,
+        "exterior_segment_fraction": 0.10183150183150183,
+        "exterior_length_fraction": 0.07720929956630913
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 68.64204991167693,
+        "max_excursion": 0.0,
+        "samples": 74707,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 68.64204991167693,
+        "max_excursion": 0.0,
+        "samples": 74707,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.05324944132932836,
+        "lower_bound": 0.05208844439922043,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p6",
+      "mass_share": 0.20029123070233748,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 4084,
+        "segments": 4095,
+        "exterior_segments": 51,
+        "exterior_arc_length": 0.4933707071471989,
+        "path_length": 92.41469243316438,
+        "max_excursion": 0.012045983032700732,
+        "samples": 98524,
+        "containment": 0.9970703125,
+        "mass_weighted_containment": 0.9970703125,
+        "exterior_segment_fraction": 0.012454212454212455,
+        "exterior_length_fraction": 0.005338660922385384
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 92.41469243316438,
+        "max_excursion": 0.0,
+        "samples": 98524,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 92.41469243316438,
+        "max_excursion": 0.0,
+        "samples": 98524,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.050309573955016576,
+        "lower_bound": 0.04895434955992529,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    },
+    {
+      "piece": "p7",
+      "mass_share": 0.04286230631537375,
+      "reproduces_saved_assigned_measurement": true,
+      "assigned_piece": {
+        "waypoints": 4096,
+        "waypoints_inside": 3975,
+        "segments": 4095,
+        "exterior_segments": 383,
+        "exterior_arc_length": 4.360224236108712,
+        "path_length": 67.57244700535513,
+        "max_excursion": 0.017629355636370355,
+        "samples": 73718,
+        "containment": 0.970458984375,
+        "mass_weighted_containment": 0.970458984375,
+        "exterior_segment_fraction": 0.09352869352869353,
+        "exterior_length_fraction": 0.0645266588579094
+      },
+      "whole_polygonal_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 67.57244700535513,
+        "max_excursion": 0.0,
+        "samples": 73718,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "analytic_torus": {
+        "waypoints": 4096,
+        "waypoints_inside": 4096,
+        "segments": 4095,
+        "exterior_segments": 0,
+        "exterior_arc_length": 0.0,
+        "path_length": 67.57244700535513,
+        "max_excursion": 0.0,
+        "samples": 73718,
+        "containment": 1.0,
+        "mass_weighted_containment": 1.0,
+        "exterior_segment_fraction": 0.0,
+        "exterior_length_fraction": 0.0
+      },
+      "hull_gap": {
+        "quantity": "delta_j = sup over conv(Omega_j) of dist(z, Omega_j), normalised units",
+        "status": "upper bound (certified)",
+        "upper_bound": 0.04550470669910952,
+        "lower_bound": 0.044167740175556976,
+        "tolerance": 0.002,
+        "stopped_by": "tolerance",
+        "method": "branch and bound on cubes; exact point-triangle distance (libigl AABB); sign from the generalised winding number",
+        "conditional_on": [
+          "winding number correct to within 1/4 farther than TAU from the surface; ambiguous centres use +distance (conservative)",
+          "boundary tolerance TAU = 1e-09 and rounding allowance EPS = 1e-09",
+          "the closed polygonal piece surface stored in geometry.npz",
+          "a bound on the piece path excursion only via the paper corollary (path inside conv(Omega_j)), up to the solver tolerances of the accepted solve"
+        ]
+      }
+    }
+  ],
+  "runtime": {
+    "whole_m5": {
+      "tetrahedralization": 0.5561429000081262,
+      "solve": 25.66118889999052,
+      "to_waypoints": 26.217331799998647,
+      "concurrency": "one nested solve"
+    },
+    "pieces_m4": {
+      "tetrahedralization": 0.5761532000033185,
+      "coacd": 40.609451099997386,
+      "partition_excluding_coacd": 1.7989485999569297,
+      "checks": 0.22579719999339432,
+      "solve": 17.374467800022103,
+      "sum_of_piece_elapsed_solve_times": 117.50913069990929,
+      "to_waypoints": 60.58481789997313,
+      "to_waypoints_excluding_coacd": 19.975366799975745,
+      "concurrency": "8 worker processes, one piece per task"
+    },
+    "source": "Saved stage timings of the two original runs (same machine), not re-timed here",
+    "definitions": {
+      "solve": "wall-clock time of the solve stage",
+      "sum_of_piece_elapsed_solve_times": "sum of the eight per-piece elapsed (wall-clock) times of nested solve + acceptance, each measured inside its own concurrently running worker process; not CPU time and not a serial runtime",
+      "to_waypoints": "whole: tetrahedralization + solve; pieces: tetrahedralization + partition (including CoACD, except in to_waypoints_excluding_coacd) + checks + solve wall time"
+    }
+  }
+}

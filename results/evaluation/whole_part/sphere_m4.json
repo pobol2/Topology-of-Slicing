@@ -1,0 +1,293 @@
+{
+  "part": "sphere",
+  "m": 4,
+  "waypoint_count": 4096,
+  "density": "uniform",
+  "validation": "results/volumetric/validation_nested.json",
+  "versions": {
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "trimesh": "4.12.2",
+    "tetgen": "0.8.4",
+    "manifold3d": "3.4.1",
+    "psutil": "7.2.2",
+    "geogram": "1.10.1"
+  },
+  "weight_regularization": 0.0,
+  "linear_solver": "Geogram OT_PRECG",
+  "geogram_initialization": "nested m-1 interpolation + HLBFGS handoff 0.5",
+  "construction": {
+    "existing_model": "models/sphere.stl"
+  },
+  "meshing": {
+    "runtime_seconds": 0.14069250000466127,
+    "peak_process_tree_bytes": 173318144,
+    "initial_process_rss_bytes": 152158208,
+    "sampling_interval_seconds": 0.02,
+    "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)",
+    "vertex_count": 3476,
+    "tetrahedron_count": 12861,
+    "max_tetrahedron_volume": null,
+    "switches": "pq1.4Q"
+  },
+  "solving": {
+    "runtime_seconds": 2.7358595999976387,
+    "peak_process_tree_bytes": 199352320,
+    "initial_process_rss_bytes": 171311104,
+    "sampling_interval_seconds": 0.02,
+    "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+  },
+  "adapter_stage": {
+    "runtime_seconds": 1.8301410999993095,
+    "peak_process_tree_bytes": 170520576,
+    "initial_process_rss_bytes": 135725056,
+    "sampling_interval_seconds": 0.02,
+    "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+  },
+  "containment_stage": {
+    "runtime_seconds": 3.532851500000106,
+    "peak_process_tree_bytes": 371384320,
+    "initial_process_rss_bytes": 133439488,
+    "sampling_interval_seconds": 0.02,
+    "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+  },
+  "initialization": {
+    "method": "nested m-1 interpolation + HLBFGS handoff 0.5",
+    "start_order": 2,
+    "lbfgs_handoff_factor": 0.5,
+    "levels": [
+      {
+        "order": 2,
+        "initialization": {
+          "method": "Exact contracted grid inside an interior ball",
+          "centre": [
+            0.5290448116755544,
+            0.4737105257090584,
+            0.390980547083823
+          ],
+          "radius": 0.3337762040363293,
+          "contraction": 0.3465248135324569,
+          "exact_distance_queries": 512,
+          "tetrahedron_centres": 12861
+        },
+        "runtime_seconds": 0.3922420000017155,
+        "adapter_stage": {
+          "runtime_seconds": 0.17398549999052193,
+          "peak_process_tree_bytes": 179437568,
+          "initial_process_rss_bytes": 167108608,
+          "sampling_interval_seconds": 0.02,
+          "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+        },
+        "iterations": 6,
+        "empty_cells": 0,
+        "initialization_reports": [],
+        "max_relative_mass_error": 3.1249812848521685e-08,
+        "converged": true,
+        "upstream_report": "   OTM      : iter=10 nbZ=0 avg_diff=5.45303e-07% max_diff=3.12498e-06% g=3.49892e-10 threshold=5.95123e-09"
+      },
+      {
+        "order": 3,
+        "initialization": {
+          "method": "Nested order-(m-1) trilinear interpolation",
+          "source_order": 2
+        },
+        "runtime_seconds": 0.4708116000110749,
+        "adapter_stage": {
+          "runtime_seconds": 0.4676259999978356,
+          "peak_process_tree_bytes": 167145472,
+          "initial_process_rss_bytes": 167124992,
+          "sampling_interval_seconds": 0.02,
+          "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+        },
+        "iterations": 3,
+        "empty_cells": 0,
+        "initialization_reports": [
+          {
+            "method": "Existing Geogram HLBFGS",
+            "handoff_factor": 0.5,
+            "iterations": 7,
+            "runtime_seconds": 0.2218768,
+            "max_relative_mass_error": 0.028113791069244387,
+            "empty_cells": 0,
+            "upstream_report": "   OTM      : iter=8 nbZ=0 avg_diff=0.901441% max_diff=2.81138% g=0.00018437 threshold=0.000371952"
+          }
+        ],
+        "max_relative_mass_error": 8.712036503322196e-08,
+        "converged": true,
+        "upstream_report": "   OTM      : iter=12 nbZ=0 avg_diff=1.84891e-06% max_diff=8.71204e-06% g=4.03471e-10 threshold=7.43904e-10"
+      },
+      {
+        "order": 4,
+        "initialization": {
+          "method": "Nested order-(m-1) trilinear interpolation",
+          "source_order": 3
+        },
+        "runtime_seconds": 1.8526163000060478,
+        "adapter_stage": {
+          "runtime_seconds": 1.8301410999993095,
+          "peak_process_tree_bytes": 170520576,
+          "initial_process_rss_bytes": 135725056,
+          "sampling_interval_seconds": 0.02,
+          "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+        },
+        "iterations": 3,
+        "empty_cells": 0,
+        "initialization_reports": [
+          {
+            "method": "Existing Geogram HLBFGS",
+            "handoff_factor": 0.5,
+            "iterations": 8,
+            "runtime_seconds": 1.0722381,
+            "max_relative_mass_error": 0.013263420355777322,
+            "empty_cells": 0,
+            "upstream_report": "   OTM      : iter=10 nbZ=0 avg_diff=0.435388% max_diff=1.32634% g=3.23072e-05 threshold=4.6494e-05"
+          }
+        ],
+        "max_relative_mass_error": 3.94195693864674e-08,
+        "converged": true,
+        "upstream_report": "   OTM      : iter=14 nbZ=0 avg_diff=8.45276e-07% max_diff=3.94196e-06% g=6.73679e-11 threshold=9.2988e-11"
+      }
+    ]
+  },
+  "initialization_reports": [
+    {
+      "method": "Existing Geogram HLBFGS",
+      "handoff_factor": 0.5,
+      "iterations": 8,
+      "runtime_seconds": 1.0722381,
+      "max_relative_mass_error": 0.013263420355777322,
+      "empty_cells": 0,
+      "upstream_report": "   OTM      : iter=10 nbZ=0 avg_diff=0.435388% max_diff=1.32634% g=3.23072e-05 threshold=4.6494e-05"
+    }
+  ],
+  "solver_report": {
+    "iterations": 3,
+    "empty_cells": 0,
+    "upstream_gradient_norm": 6.736785953644291e-11,
+    "upstream_report": "   OTM      : iter=14 nbZ=0 avg_diff=8.45276e-07% max_diff=3.94196e-06% g=6.73679e-11 threshold=9.2988e-11",
+    "max_relative_mass_error": 3.94195693864674e-08,
+    "max_relative_adapter_mass_disagreement": 2.0404293995303036e-15,
+    "converged": true,
+    "weight_gauge": "Mean zero; subtracting a common constant leaves all cells unchanged",
+    "raw_weight_mean": -9.533473424210362e-07
+  },
+  "cell_metrics": {
+    "max_diameter": 0.12004968582785319,
+    "p99_diameter": 0.11928914709331204,
+    "fraction_centroids_outside": 0.0
+  },
+  "acceptance": {
+    "max_relative_mass_error": 3.94195693864674e-08,
+    "relative_tolerance": 1e-06,
+    "empty_cells": 0,
+    "nonpositive_cell_masses": 0,
+    "finite_centroids": true,
+    "hilbert_misordered_cells": 0,
+    "hilbert_order_check": "centroid i power-nearest to Hilbert site i (convex Laguerre cell)",
+    "passed": true
+  },
+  "initial_pipeline_runtime_seconds": 6.503772399999434,
+  "metrics": {
+    "waypoint_count": 4096,
+    "table4": {
+      "inside_fraction": 1.0,
+      "chamfer": 0.020716933163535917,
+      "coverage": 0.7981709239987386,
+      "coverage_cv": 0.7076852429643047,
+      "locality": 1.356263662126796,
+      "jumps": 0.0,
+      "mean_step": 0.05049311991940117,
+      "max_step": 0.0731272827025294
+    },
+    "segment_metrics": {
+      "model_name": "sphere",
+      "waypoint_count": 4096,
+      "segment_count": 4095,
+      "sanity_check": {},
+      "parameters": {
+        "p_ot": null,
+        "p_path": 4,
+        "project": false,
+        "normalization_padding": 0.05,
+        "w": 0.03722957514044242,
+        "w_definition": "mean k=2 self-query second-neighbour distance",
+        "maximum_sampling_spacing": 0.001,
+        "actual_maximum_sampling_spacing": 0.000999914941879159,
+        "segment_sampling": "ceil(length/spacing)+1 uniform samples; endpoints included",
+        "shared_endpoints_counted_once_per_incident_segment": true,
+        "corner_threshold_degrees": [
+          1,
+          15,
+          45,
+          90
+        ],
+        "support_and_clearance_half_angles_degrees": [
+          45,
+          30
+        ],
+        "tan_45_degrees": 1.0,
+        "tan_30_degrees": 0.5773502691896257,
+        "z_min": 0.08974490989947129,
+        "build_plate_maximum_height": 0.1083596974696925,
+        "distance_method": "exact analytic surface distance in inside_fn normalization frame",
+        "cone_algorithm": "imported exhaustive comparisons",
+        "map": "Semi-discrete OT; no interpolation or projection",
+        "cone_working_batch_size": 128
+      },
+      "w": 0.03722957514044242,
+      "total_segment_samples": 213058,
+      "exterior_sample_count": 0,
+      "exterior_segment_count": 0,
+      "exterior_segment_fraction": 0.0,
+      "exterior_arc_length": 0.0,
+      "exterior_arc_length_fraction": 0.0,
+      "maximum_excursion_depth": 0.0,
+      "exterior_segments_with_both_endpoints_inside": 0,
+      "path_length": 206.7693260699478,
+      "corners_above_degrees": {
+        "1": 3952,
+        "15": 3688,
+        "45": 3604,
+        "90": 1838
+      },
+      "zero_length_segment_count": 0,
+      "interior_waypoints_with_undefined_turn": 0,
+      "build_plate_waypoint_count": 52,
+      "ordered_deposition": {
+        "45": {
+          "unsupported_waypoint_count": 2936,
+          "unsupported_waypoint_fraction": 0.716796875,
+          "clearance_violating_waypoint_count": 3534,
+          "clearance_violating_waypoint_fraction": 0.86279296875
+        },
+        "30": {
+          "unsupported_waypoint_count": 3422,
+          "unsupported_waypoint_fraction": 0.83544921875,
+          "clearance_violating_waypoint_count": 3148,
+          "clearance_violating_waypoint_fraction": 0.7685546875
+        }
+      },
+      "covering_radius_target_eval": 0.042541078368428895,
+      "covering_radius_target_eval_count": 10000,
+      "metric_runtime_seconds": 0.4676535999897169
+    },
+    "detected_jumps": 0,
+    "exterior_runs": {
+      "count": 0,
+      "total_run_length": 0.0,
+      "longest_run_segments": 0,
+      "longest_run_length": 0.0
+    },
+    "runtime_seconds": 0.4938430000038352,
+    "stage": {
+      "runtime_seconds": 0.5003794999938691,
+      "peak_process_tree_bytes": 197058560,
+      "initial_process_rss_bytes": 163303424,
+      "sampling_interval_seconds": 0.02,
+      "memory_definition": "Peak sampled sum of process-tree RSS during this stage (20 ms sampling)"
+    },
+    "p99_step": 0.07289363355080042
+  },
+  "passed": true,
+  "runtime_seconds": 7.045949999999721
+}

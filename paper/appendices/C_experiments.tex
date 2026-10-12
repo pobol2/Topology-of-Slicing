@@ -1,0 +1,87 @@
+\section{Volumetric experimental methods and supporting results}
+\label{sec:experiments}
+
+This appendix supplies the methods and the additional results behind the evaluation of the first application in Section~\ref{main:evidence}. Subsections~\ref{sec:implementation} and~\ref{sec:experiments-setup} give the implementation, metrics, and baselines. Subsection~\ref{sec:experiments-geometries} reports all fifteen whole-part runs. Subsection~\ref{sec:experiments-resolution} separates the two non-convex failure mechanisms. Subsection~\ref{sec:experiments-pieces-independent} documents the partitions, hull-gap evaluation, and same-budget comparison. The methods of the kinematics-first experiment are in Appendix~\ref{app:kin}.
+
+\subsection{Implementation}
+\label{sec:implementation}
+
+\paragraph{Geometry.}
+A watertight polygonal solid is scaled into $[0,1]^3$ with a margin of $0.05$, and all distances are in these normalised units. The solid is divided into tetrahedra by TetGen \cite{si2015tetgen} without changing its surface. The sites are the $n=8^m$ cell centres of the order-$m$ Hilbert curve, generated with Skilling's integer transform \cite{skilling2004}; for orders 1 to 6 we checked the face-adjacent, nested ordering that Subsection~\ref{sec:vsfc-hilbert} assumes. No waypoint is projected, removed, or smoothed.
+
+\paragraph{Solver.}
+The equal-mass weights \eqref{eq:main-equal-mass} are computed by the unmodified semi-discrete solver of Geogram~1.10.1 \cite{levy2015numerical}. The solve runs coarse to fine: at order two, initial weights are chosen so that every cell has positive mass, and Newton iterations \cite{kitagawa2019convergence} follow; each higher order starts from the previous order's weights, interpolated onto the nested grid. The stopping threshold bounds each relative cell-mass error by $10^{-6}$. The centroids \eqref{eq:main-centroid} are integrated exactly over the clipped cells with a degree-two tetrahedral rule.
+
+\paragraph{Acceptance.}
+A result is accepted only if every relative cell-mass error is below $10^{-6}$, no cell is empty, every centroid is finite, and every centroid is power-nearest to its own site, which confirms that the waypoints keep their Hilbert labels (Proposition~\ref{prop:sd-mass}(ii)). Every transport solve reported here passed; acceptance does not certify geometric containment. On the unit cube, the solver returned zero weights and centroids equal to the sites to $10^{-15}$, as Proposition~\ref{prop:sd-mass}(v) requires.
+
+\paragraph{Evaluation domain.}
+In the whole-part series, containment and segment metrics for the cylinder, sphere, and torus use the analytic solids; the decomposition experiments use the polygonal meshes.
+
+\subsection{Metrics and baselines}
+\label{sec:experiments-setup}
+
+\emph{Cloud metrics} ignore the order of the waypoints. Containment is the fraction of waypoints inside $\Omega$. Coverage is the fraction of voxels of a $20^3$ grid that meet $\Omega$ and contain a waypoint, and its coefficient of variation (CV) is that of the waypoint counts over those voxels, lower being more uniform. The cell diameter $D_m$ is the largest diameter of a clipped Laguerre cell. \emph{Sequence metrics} depend on the order. Jumps count steps longer than five times the mean step; this is a resolution-dependent indicator, not a continuity test. \emph{Segment metrics} sample each segment at a spacing of at most $10^{-3}$; the excursion depth is the distance from an exterior sample to the surface. The covering radius is the largest distance from a point of the evaluation sample to its nearest waypoint.
+
+The parts are a cylinder, a sphere, a solid torus, an L-bracket with a reentrant edge, and a complex part consisting of a block with several holes and a boss (genus three). The evaluation sample is a fixed, seeded set of $10\,000$ uniform interior points; the map itself involves no random choice. An independent uniform sample of the same size provides a coverage reference.
+
+The layered baseline visits the cells of the grid of side $2^{-m}$ whose centres lie in $\Omega$, layer by layer, traversing each layer row by row in alternating directions; it is the planar slicer with $h=2^{-m}$. Every move between cells that do not share a face is a travel move, hence a stop, and moves between layers are counted separately. For the transported path, each maximal \emph{exterior run} of segments leaving $\Omega$ counts as one stop.
+
+\subsection{Whole-part runs}
+\label{sec:experiments-geometries}
+
+\paragraph{Setup.}
+Each of the five parts is solved as a single target with uniform density at orders four, five, and six, giving fifteen runs.
+
+\paragraph{Containment and coverage.}
+Table~\ref{tab:experiments-geometries} reports every uniform run. On the torus at order four, coverage is $0.882$ with CV $0.613$, against $0.861$ and $0.732$ for the uniform reference. Re-evaluating on ten independent samples changes coverage, CV, and covering radius by at most $0.006$. Convex containment follows from Proposition~\ref{prop:sd-mass}(iv); jump counts and step lengths are measured.
+
+\input{tables/experiments_geometries}
+
+\paragraph{Stops against the layered baseline.}
+\label{sec:experiments-interruptions}
+Table~\ref{tab:main-stops} gives the counts. The L-bracket's cross-sections are rectangles aligned with the raster grid, so its rows almost always continue within a layer.
+
+\subsection{Non-convex parts and refinement}
+\label{sec:experiments-resolution}
+\label{sec:sd-nonconvex}
+
+These results reuse the whole-part runs and support the main-text claim that refinement reduces but does not remove the non-convex failures.
+
+\paragraph{Outside centroids and crossing chords.}
+The two non-convex mechanisms of Section~\ref{main:semidiscrete} can be told apart by asking whether an exterior segment has both endpoints inside. On the L-bracket, none does at any order: every excursion starts or ends at a centroid in the region between the arms, where cells clipped into two arms place their centroids. On the complex part, a growing share have both endpoints inside (from $65$ of $156$ exterior segments at order four to $1218$ of $1765$ at order six): consecutive centroids lie on opposite sides of a hole and the chord between them crosses it. The torus lies between the two.
+
+\subsection{Decomposed source}
+\label{sec:experiments-pieces-independent}
+
+These runs test Proposition~\ref{prop:sd-hull-gap} and Corollary~\ref{cor:sd-piece-hull-gap} on the L-bracket's two-box control and on an automatic partition of the polygonal torus. No path segments are added between pieces.
+
+\paragraph{Setup: partitions and solves.}
+TetGen, through the \texttt{tetgen}~0.8.4 Python package, meshes each object once (switches \texttt{pq1.4Q}). The L-bracket is split exactly into its two boxes. For the torus, CoACD~1.0.14 \cite{wei2022coacd} supplies convex hulls at threshold $0.05$ and seed zero. Each tetrahedron is assigned to the hull it lies deepest inside, connected components become pieces, and components below $1\%$ of total volume merge into a neighbour: this gives eight torus pieces. The resulting pieces need not be convex. Every tetrahedron has exactly one owner, and piece volumes conserve the total to rounding error.
+
+All targets are uniform. Each piece receives order four, 4096 Hilbert sites, its conditional density, and time share $w_j$ equal to its volume fraction. The unchanged pipeline and acceptance checks of Subsection~\ref{sec:implementation} are used, and all ten solves pass.
+
+\paragraph{Setup: hull-gap bounds.}
+The two boxes have $\delta_j=0$. For each automatic piece, a branch-and-bound computation covers its convex hull by cubes, bounding the distance to the piece on each cube and refining until the upper and lower bounds $U_j$ and $L_j$ are within $2\times10^{-3}$. The computation uses floating-point geometry and winding numbers for inside tests, without an interval-arithmetic proof, so the bounds are numerical rather than exact. Their positive lower bounds show that the automatic pieces are not convex.
+
+\paragraph{Results against the assigned pieces.}
+Each segment is sampled at a spacing of at most $10^{-3}$ and counted exterior if any sample lies outside its piece; depth is the largest sampled distance. Table~\ref{tab:decomposition} reports the two cases; every sampled excursion is below its own $U_j$.
+
+\input{tables/decomposition_main}
+
+\paragraph{Results against the whole object.}
+\label{sec:experiments-torus-comparison}
+A same-budget comparison re-evaluates two saved torus runs with $32\,768$ waypoints each, the whole-part order-five run and the eight-piece order-four run, against the polygonal torus. Coverage, CV, and covering radius use the same $10\,000$ interior samples for both; each piece waypoint is weighted by its piece's time share, $w_j/4096$, since ignoring these weights would give a misleading CV of $0.84$ rather than $0.40$.
+
+Table~\ref{tab:torus-whole-vs-pieces} reports measurements against both the assigned pieces and the whole torus; these containment tests use different domains.
+
+\paragraph{Figure run at the whole-part budget.}
+\label{sec:experiments-torus-figure}
+The torus piece paths in Figure~\ref{fig:containment-repair} come from a separate run with the same partition, pipeline, and acceptance checks at order three: eight pieces of 512 waypoints, 4096 in total, the budget of the order-four whole-part path beside them. All eight solves pass. Against the assigned pieces, 334 of the 4088 segments ($8.2\%$) leave their own piece, with a deepest sampled excursion of $0.019$, below every $U_j$. Against the analytic torus, with 60 samples per segment, no segment leaves the part, whereas the order-four whole-part path has one exterior segment.
+
+\paragraph{Limitations.}
+Zero detected exterior segments is a sampled result, not a containment certificate, and the hull-gap bounds are numerical. The effect of assigned-piece crossings on local density and overlap is unmeasured, and the comparison concerns these two torus runs only.
+
+
+\paragraph{Teaser provenance.}
+Figure~\ref{fig:teaser} uses the Stanford bunny redistributed with libigl's tutorial data (6966 triangles), without repair or simplification. TetGen (\texttt{tetgen}~0.8.4, \texttt{pq1.4Q}) meshes it once; CoACD~1.0.14 at threshold $0.1$ and seed zero, followed by the tetrahedron assignment and $1\%$ component-merge rule above, gives nine pieces. Each uniform piece receives 4096 sites, its conditional density, and a time share equal to its volume fraction, so each waypoint has global mass $w_j/4096$. All nine piece solves and the additional whole-part order-five solve pass the acceptance checks. The upper teaser row uses the whole-part path and the lower row the piece paths. Records of transforms, parameters, versions, and checks are in \path{results/volumetric/decomposition/}.

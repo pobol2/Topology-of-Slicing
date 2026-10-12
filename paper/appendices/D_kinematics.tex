@@ -1,0 +1,44 @@
+\section{Kinematics-first proof, methods, and supporting results}
+\label{app:kin}
+
+This appendix supplies the proof and the experimental methods behind the second application in Section~\ref{main:next}. Subsection~\ref{app:kin-proof} proves Proposition~\ref{prop:sheets-switches}; Subsection~\ref{app:kin-setup} gives the setup, measurements, and clearance results of the three-link experiment of Section~\ref{sec:kinematics-example}.
+
+\subsection{Proof of Proposition~\ref{prop:sheets-switches}}
+\label{app:kin-proof}
+\begin{proof}
+  (i) On each of the finitely many stretches where $q$ is continuous, the safe one-sided limits extend the lifted pair to a continuous path in $F$, so the stretch lies in one sheet. The projected stretch images are compact, and their union $K$ carries all the mass; full support gives $K=\Omega$. The visited sheets therefore cover $\Omega$, so at least $c$ labels occur, and merging consecutive equal labels leaves at least $c-1$ changes, as in Proposition~\ref{prop:topology-transitions}. (ii) Visiting the $c$ patches once each gives at most $c-1$ changes, and (i) gives at least $c-1$.
+\end{proof}
+
+\subsection{Three-link experimental setup}
+\label{app:kin-setup}
+\paragraph{Robot, obstacles, and sheets.}
+A planar arm with three unrestricted revolute joints and link lengths $(1,0.5,0.5)$ deposits on the sector $\Omega=\{(r\cos\varphi,r\sin\varphi):1.6\le r\le1.85,\ |\varphi|\le30^\circ\}$ among three disks: two of radius $0.2$ centred at $(0.9,\pm\sqrt{0.19})$ and one of radius $0.1$ centred at $(1.35,0.10)$ (Figure~\ref{fig:sheets-3r}(a)). Clearance is measured for all three links against every disk. A pose counts as available, and an inverse-kinematics solution as valid, when its clearance is at least $10^{-3}$. Sampling the safe fibre at four radii, $r\in\{1.6,1.75,1.8,1.85\}$, on $T^3$ gives two endpoint-anchored families, labelled Down and Up. They are separate in the sampled fibre graph at every reported radius, and their projections overlap only for $\varphi\in[-4.4^\circ,12.9^\circ]$. Down covers the sector up to $12.9^\circ$ and Up from $-4.4^\circ$, so neither covers $\Omega$ alone and $c=2$ in the sampled model.
+
+\paragraph{Chart, waypoints, and densities.}
+Both pipelines use the same intended sector chart, $r^2=1.6^2+s(1.85^2-1.6^2)$, $\varphi=-30^\circ+60^\circ v$, $(s,v)\in[0,1]^2$. It is area-preserving up to a constant, so uniform source density in $(s,v)$ gives uniform area density. Both use the same $4^m$ order-$m$ Hilbert waypoints at orders $m=2,3,4$, and two target densities: uniform, and a gradient density that relative to area rises linearly in $v$ from $0.5$ to $1.5$. The gradient is imposed analytically by the inverse cumulative map $v\mapsto-\tfrac12+\sqrt{\tfrac14+2v}$. Waypoints are joined by straight chart segments, subdivided into collocation points no more than $0.004$ apart in the workspace.
+
+\paragraph{Geometry-first baseline.}
+The baseline follows the Hilbert path over the whole chart, solves constrained inverse kinematics at each collocation point, warm-started from the previous solution, and changes posture only when the current family becomes unavailable. Solving afresh at every point is a property of this baseline, not of the geometry-first order: a geometry-first planner could also cache inverse maps.
+
+\paragraph{Kinematics-first preparation.}
+Preparation builds two patches: Down over $\varphi\in[-30^\circ,12.5^\circ]$ and Up over $[-4^\circ,30^\circ]$, both over the whole radial interval. For each patch, it solves inverse kinematics in the selected family on a $17\times129$ grid of the patch chart, with clearance at least $0.004$ at the vertices. It stores the result as a piecewise-affine joint-pose map on the triangulated grid, and certifies every one of its $4096$ joint-space triangles collision-free. Then forward kinematics of the stored map is compared with the intended chart on a denser $33\times257$ grid. The largest deviation is $0.0018$ for Down and $0.00096$ for Up, against an acceptance threshold of $0.002$. This is a sampled validation tolerance, not a certified bound on tracking error over the patch.
+
+\paragraph{Kinematics-first requests.}
+Each request splits the source square at the target cut $4.25^\circ$, the middle of the sampled overlap. Whole Hilbert rows are assigned to each patch so that their share is the closest available to that patch's share of target mass. Rounding changes the share: for uniform density at order four, $0.571$ becomes $0.5625$. The $v$-coordinates of each group are rescaled so that the row boundary maps to the target cut, the density map is applied, and the result is expressed in that patch's chart. The stored map then gives joint poses without any inverse-kinematics solve. Collocation points include every crossing of a triangle edge, so the joint path, linear between them, equals the stored map along each chart segment. The tool path is not prescribed. It is $\FK$ of this joint motion, and only approximates the intended chart: across all requests, the largest sampled deviation at collocation points is $9.6\times10^{-4}$.
+
+The construction realises the theoretical lifts $\sigma_i$ only approximately. Write $\xi_i$ for the source path of patch~$i$ and $\Psi_{k,i}$ for the composition of rescaling, density map, patch chart, and stored joint-pose map. The implementation is then
+\[
+  q=\Psi_{k,i}\circ\xi_i,\qquad x=\FK\circ q,
+\]
+an instance of \eqref{eq:kinematicsfirst}, with $\FK\circ\Psi_{k,i}$ approximating the intended chart rather than equal to it. Parameterising a prepared lift through workspace coordinates does not in itself determine the construction order. What makes this construction kinematics-first is that joint motion comes from the source through a prepared, certified map, and the tool path is derived from it. The prescribed tool path is not lifted point by point. The density condition of Section~\ref{sec:kinematics-density} is targeted through the analytic chart and density map. A small position error does not establish it, because a small deviation in $x$ does not bound the deviation of the Jacobian $J_S$.
+
+The implementation does not generate a separate Hilbert traversal for each patch. It restricts the one order-$m$ Hilbert sequence to the two row groups and concatenates them. The two groups are joined through a common handoff point in the overlap, where one posture reset occurs (Figure~\ref{fig:sheets-3r}(b,d)). A restricted sequence keeps the original order of its points, but where the full curve leaves the group and re-enters, consecutive retained points can be far apart, so these restrictions can introduce longer connections. The connectors to and from the handoff point add tool travel outside the waypoint budget.
+
+\paragraph{Certification.}
+For both pipelines, every continuous stretch of the joint path is certified collision-free over adaptively subdivided pieces, using a Lipschitz lower bound on clearance. The certificate establishes positive clearance; it does not establish the $10^{-3}$ margin. A \emph{reset} is a discrete posture change at a fixed tool point. It is counted, but the physical transition between postures is neither planned nor certified.
+
+\paragraph{Measurements.}
+The \emph{switch count} is the number of observed resets. The \emph{coverage error} is the largest distance from a $33\times129$ target grid to the sampled depositing path. The \emph{density error} is the total-variation distance between target shares and the shares of the original waypoints, mapped through $\FK$, on $4\times8$ area bins. It measures where waypoints land, not continuous deposition over time: connectors, tool speed, and material flow are not in the score. At order two, 16 waypoints cannot fill 32 bins, so the uniform density error cannot fall below $0.5$. Timing uses wall-clock medians on one machine with an unoptimised Python implementation, after one untimed warm-up request. A shared fibre analysis ($8.2$~s) serves both pipelines and is included in the cumulative times reported in Section~\ref{sec:kinematics-example}. \emph{Preparation} is the method-specific one-time cost, and \emph{planning} is the time to plan and certify one request. Requests change the Hilbert order or the target density while the robot, obstacles, and target stay fixed. Kinematics-first retains its prepared maps across requests. The geometry-first baseline retains only the shared fibre analysis: as implemented, its inverse-kinematics solves and certificates belong to each request's tool points.
+
+\paragraph{Clearance.}
+Certified clearance bounds are positive but conservative worst-piece values, far below the sampled minima. Sampled minimum clearance is $0.0038$ to $0.0040$ for kinematics-first. For geometry-first, it is $0.00077$ to $0.00086$, below the $10^{-3}$ imposed at each collocation point, so the geometry-first paths do not keep that margin between points.

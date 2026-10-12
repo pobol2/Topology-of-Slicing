@@ -1,0 +1,36 @@
+% ─────────────────────────────────────────────────────────────────────────────
+%  MYCOMMANDS.STY
+%  Project-specific commands and notation
+% ─────────────────────────────────────────────────────────────────────────────
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mycommands}[Project commands and notation]
+
+% ── Operators ─────────────────────────────────────────────────────────────────
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\FK}{FK}
+\DeclareMathOperator{\IK}{IK}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\dist}{dist}
+
+% ── Spaces and recurring notation ─────────────────────────────────────────────
+\newcommand{\Xs}{\mathcal{X}}                 % source space
+\newcommand{\Qs}{\mathcal{Q}}                 % configuration space
+\newcommand{\Qfree}{\Qs_{\mathrm{free}}}
+\newcommand{\Hil}{\mathcal{H}_3}              % 3D Hilbert traversal
+\newcommand{\Paths}[1]{\operatorname{PC}(#1)} % piecewise continuous paths [0,1]->M
+\newcommand{\ppath}{m_{\mathrm{path}}}  % Hilbert order of the evaluated path
+\newcommand{\pot}{m_{\mathrm{OT}}}      % Hilbert order of the fitted transport
+\newcommand{\Npath}{N_{\mathrm{path}}}
+\newcommand{\Nctrl}{N_{\mathrm{ctrl}}}
+\newcommand{\rloc}{r_{\mathrm{loc}}}
+
+
+% Visible draft placeholders; remove only when the corresponding result is validated.
+\newcommand{\todo}[1]{\textcolor{red!70!black}{\textbf{[TODO: #1]}}}
+
+% Figure with a labelled placeholder box when the asset is not yet available.
+% #1 = path (with extension), #2 = width, #3 = placeholder height.
+\newcommand{\includegraphicsorbox}[3]{%
+  \IfFileExists{#1}{\includegraphics[width=#2]{#1}}{%
+    \fbox{\parbox[c][#3][c]{\dimexpr#2-2\fboxsep-2\fboxrule\relax}{\centering\small\textbf{Placeholder:} figure asset \detokenize{#1} not yet available.}}}}

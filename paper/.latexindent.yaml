@@ -1,0 +1,8 @@
+defaultIndent: '  '
+noAdditionalIndent:
+  document: 0
+specialBeginEnd:
+  - name: grouping
+    begin: '\\begingroup'
+    end: '\\endgroup'
+    lookForThis: 1

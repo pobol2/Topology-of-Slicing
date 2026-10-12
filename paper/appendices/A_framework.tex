@@ -1,0 +1,171 @@
+\section{Framework and interruption guarantees}
+\label{sec:cms}
+
+This appendix supports the framework claims of Section~\ref{main:chain}: that a slicer is a chain of maps, that guarantees compose from link to link, and that a disconnected source forces transitions. Subsection~\ref{sec:cms-spaces} fixes the spaces, the deposition-time convention, and the formal definition of a geometry-first map chain. Subsection~\ref{sec:cms-composition} states and proves the composition rules. Subsection~\ref{sec:topology} proves the transition bound for disconnected sources and its propagation into tool-path, machine, and deposition interruptions.
+
+\subsection{Spaces, paths, and the map chain}
+\label{sec:cms-spaces}
+
+Let $\Omega\subset\mathbb{R}^3$ be compact, with target deposition measure $\mu_\Omega$. All measures are probability measures, and $f_\#\eta(A)=\eta(f^{-1}(A))$ is the pushforward of $\eta$ by a measurable map $f$. The target measure may be volumetric or live on lower-dimensional sets such as layers. Let $\Qs$ be the configuration space of the machine \cite{lavalle2006}, with the tool-position forward-kinematics map
+\begin{equation}
+  \label{eq:cms-forward-kinematics}
+  \FK:\Qs\to\mathbb{R}^3,\qquad x=\FK\circ q.
+\end{equation}
+The static admissible set $\Qfree\subseteq\Qs$ encodes joint limits, a prescribed singularity margin, and avoidance of fixed obstacles.
+
+\paragraph{Deposition time.}
+Time $t\in I=[0,1]$ is normalised deposition time, and $\lambda^1$ is the uniform probability measure on $I$. For a space $M$, $\Paths{M}$ denotes the paths $I\to M$ that are continuous on the pieces of a finite partition of $I$, with one-sided limits at the breakpoints; $C^0(I,M)\subseteq\Paths{M}$. Physical execution crosses each discontinuity with a non-deposition travel move, which takes machine time but no deposition time. The traversal $\xi$, tool path $x$, and joint path $q$ share the time parameter.
+
+\begin{definition}[Map chain]
+  \label{def:cms}
+  For a prescribed target $(\Omega,\mu_\Omega)$, a geometry-first map chain is a tuple
+  $(\Xs,\mu_{\Xs},\xi,\Phi,\Psi_g)$, where:
+  \begin{itemize}
+    \item $\Xs$ is a compact manifold with boundary, or a finite disjoint union of such manifolds, of dimension at most three;
+    \item $\mu_{\Xs}$ is a probability measure on $\Xs$;
+    \item $\xi\in\Paths{\Xs}$ is the traversal, satisfying $\xi_\#\lambda^1=\mu_{\Xs}$;
+    \item $\Phi:\Xs\to\Omega$ is a measurable geometry map, satisfying $\Phi_\#\mu_{\Xs}=\mu_\Omega$;
+    \item $\Psi_g:\mathcal{D}\to\Paths{\Qs}$ is a configuration lift on a declared domain of paths $\mathcal{D}\subseteq\Paths{\Omega}$, satisfying
+          \begin{equation}
+            \label{eq:cms-lift}
+            \FK\circ\Psi_g[x]=x\qquad\text{for all }x\in\mathcal{D}.
+          \end{equation}
+  \end{itemize}
+\end{definition}
+The lift applies only when $x$ has finitely many discontinuities, which is not automatic for a measurable $\Phi$ (Subsection~\ref{sec:vsfc-ot}); applicability of the lift and static admissibility therefore require separate certificates. With both pushforward conditions, \eqref{eq:main-measure} gives the tool path the occupation measure $\mu_\Omega$. The process operator $\Theta$, which maps a joint path to a manufactured set for a fixed process and protocol, is left abstract.
+
+Definition~\ref{def:cms} and the certificates below describe the geometry-first order, in which the tool path is built and then lifted. The kinematics-first construction of Section~\ref{main:next} is not a permutation of these maps: it introduces a new map $\Psi_k$ from the source into $\Qfree$ and derives the tool path through forward kinematics \eqref{eq:kinematicsfirst}, so static feasibility becomes a certificate of $\Psi_k$, while the occupation measure becomes the density obligation stated there.
+
+The lift acts on whole paths because, for an $n$-joint arm at a regular value of $\FK$, the fibre $\FK^{-1}(x)$ is locally $(n-3)$-dimensional \cite{burdick1989}: no configuration in it is canonical, and singularities can prevent a globally continuous inverse branch \cite{gottlieb1988robots,pavesic2017topologist,zhang2021singularity}. A lift is therefore selected along the whole path \cite{kazerounian1988global,chalvin2020layer,yang2020coverage}.
+
+\paragraph{The planar chain.}
+In the planar chain, $D_k$ is the cross-section at height $z_k$, and the label $k$ keeps the slices apart in the source even though the solid is connected. The ideal source measure is $\mu_{\Xs}=\sum_kw_k\bar\lambda_{D_k}$, with $w_k\geq0$ the time share of layer $k$ and $\bar\lambda_{D_k}$ the normalised area measure on $D_k\times\{k\}$. A finite zigzag only approximates this area measure; taking $\mu_{\Xs}$ to be the normalised occupation measure of the zigzag centreline instead gives an exact chain for the finite raster.
+
+\subsection{Certificates that compose}
+\label{sec:cms-composition}
+
+A \emph{certificate} is a property of one stage alone, on a specified domain. Five kinds are used:
+\begin{itemize}
+  \item \emph{Coverage:} a pushforward identity, or a measure error bounded in $W_\infty$.
+  \item \emph{Regularity:} a modulus of continuity $\omega_f(\delta)=\sup_{d(a,a')\leq\delta}d(f(a),f(a'))$.
+  \item \emph{Discontinuity:} the set $\Sigma(f)$ of discontinuity points, or a certified set containing it.
+  \item \emph{Containment:} a region containing the image of the stage.
+  \item \emph{Stability:} a uniform implementation error $\|\hat f-f\|_\infty\leq\varepsilon_f$, measured in the target space of the stage.
+\end{itemize}
+For probability measures on a compact metric space, $W_\infty$ \cite{champion2008infinity} is the smallest $r$ such that some coupling moves no mass farther than $r$. For paths with discontinuities, regularity certificates hold on each continuous piece.
+
+\begin{proposition}[Composition rules]
+  \label{prop:composition}
+  Let $f\colon A\to B$ and $g\colon B\to C$ be measurable stages between compact metric spaces and $\mu$ a probability measure on $A$, with $\nu$ and $\kappa$ target probability measures on $B$ and $C$.
+  \begin{enumerate}[label=(\roman*)]
+    \item \emph{Coverage.} $W_\infty\bigl((g\circ f)_\#\mu,\kappa\bigr)\leq\omega_g\bigl(W_\infty(f_\#\mu,\nu)\bigr)+W_\infty(g_\#\nu,\kappa)$. In particular, exact pushforward certificates compose exactly.
+    \item \emph{Regularity.} $\omega_{g\circ f}\leq\omega_g\circ\omega_f$.
+    \item \emph{Discontinuity.} $\Sigma(g\circ f)\subseteq\Sigma(f)\cup f^{-1}\bigl(\Sigma(g)\bigr)$.
+    \item \emph{Containment.} If $f(A)\subseteq B'$ and $g(B')\subseteq C'$, then $(g\circ f)(A)\subseteq C'$.
+    \item \emph{Stability.} If implementations $\hat f,\hat g$ satisfy $\lVert\hat f-f\rVert_\infty\leq\varepsilon_f$ on $A$ and $\lVert\hat g-g\rVert_\infty\leq\varepsilon_g$ on $\hat f(A)$, with $\omega_g$ taken on $f(A)\cup\hat f(A)$, then $\lVert\hat g\circ\hat f-g\circ f\rVert_\infty\leq\varepsilon_g+\omega_g(\varepsilon_f)$.
+  \end{enumerate}
+\end{proposition}
+\begin{proof}
+  For (i), an optimal $W_\infty$ coupling of $f_\#\mu$ and $\nu$ exists on compact spaces \cite{champion2008infinity}; push it forward by $g\times g$ and apply the triangle inequality for $W_\infty$. Items (ii)--(iv) are immediate from the definitions, and (v) follows from $\lVert\hat g\circ\hat f-g\circ\hat f\rVert_\infty+\lVert g\circ\hat f-g\circ f\rVert_\infty$.
+\end{proof}
+Rule (iii) is an upper bound; Proposition~\ref{prop:topology-transitions} gives the matching lower bound for disconnected sources. Rule (ii) multiplies H\"older exponents. Repairing one stage does not repair another: denser sampling cannot fix a wrong geometry map, and a better lift cannot fill missing coverage.
+
+\begin{corollary}[$W_\infty$ gives a covering radius]
+  \label{cor:cms-covering-radius}
+  If $W_\infty(\nu,\mu_\Omega)\leq r$, then every point of $\supp\mu_\Omega$ lies within distance $r$ of $\supp\nu$.
+\end{corollary}
+\begin{proof}
+  An optimal coupling matches almost every target point to a point of $\supp\nu$ within distance $r$. Distance to this closed set is continuous, and every neighbourhood of a point of $\supp\mu_\Omega$ has positive mass, so the bound extends to all of $\supp\mu_\Omega$.
+\end{proof}
+With $\supp\mu_\Omega=\Omega$, one coupling bound therefore controls both the distribution of deposition time and the covering radius of the path.
+
+Because $\Psi_g$ acts on paths, its certificates take a different form: a nondecreasing transfer function $T_\Psi$, such that an input path with modulus at most $\omega$ lifts to a joint path with modulus at most $T_\Psi(\omega)$; a set $B_\Psi$ of branch-switch times, with $\Sigma(q)\subseteq\Sigma(x)\cup B_\Psi$; and a region $U\subseteq\Omega$ whose admitted paths lift into $\Qfree$. A pointwise section with Lipschitz constant $L_\Psi$ has $T_\Psi(\omega)=L_\Psi\,\omega$. Table~\ref{tab:cms-guarantees} assembles the certificates; replacing a stage changes only its column.
+
+\begin{papertable}
+  \begin{papertabular}{>{\raggedright\arraybackslash}p{2.0cm}
+      >{\raggedright\arraybackslash}p{2.3cm}
+      >{\raggedright\arraybackslash}p{2.4cm}
+      >{\raggedright\arraybackslash}p{3.0cm}
+      >{\raggedright\arraybackslash}p{5.0cm}}
+    \toprule
+    Property & $\xi$ & $\Phi$ & $\Psi_g$ & Resulting guarantee \\
+    \midrule
+    Coverage &
+    $\xi_\#\lambda^1=\mu_{\Xs}$ &
+    $\Phi_\#\mu_{\Xs}=\mu_\Omega$ &
+    $\FK\circ\Psi_g[x]=x$ &
+    $x_\#\lambda^1=\mu_\Omega$ \\
+    Regularity &
+    $\omega_\xi$ &
+    $\omega_\Phi$ &
+    $T_\Psi$ &
+    $\omega_q\leq T_\Psi(\omega_\Phi\circ\omega_\xi)$ \\
+    Discontinuity &
+    $\Sigma(\xi)$ &
+    $\Sigma(\Phi)$ &
+    $B_\Psi$ &
+    $\Sigma(q)\subseteq\Sigma(\xi)$\newline
+    $\quad\cup\xi^{-1}(\Sigma(\Phi))\cup B_\Psi$ \\
+    Static feasibility &
+    -- &
+    $\Phi(\Xs)\subseteq U$ &
+    $\Paths{U}\to\Paths{\Qfree}$ &
+    $q\in\Paths{\Qfree}$ \\
+    \bottomrule
+  \end{papertabular}
+  \caption{Certificates along the geometry-first chain. Each resulting guarantee is a property of the tool path $x$ or joint path $q$, or of the occupation measure of $x$, and depends only on the certificates in its own row; none describes a manufactured part. Feasibility is with respect to the static set $\Qfree$ only.}
+  \label{tab:cms-guarantees}
+\end{papertable}
+
+
+\subsection{Transitions of disconnected sources}
+\label{sec:topology}
+
+Suppose the source is a finite disjoint union of compact connected components,
+\begin{equation}
+  \label{eq:topology-source}
+  \Xs=\bigsqcup_{k=1}^{N}\Xs_k.
+\end{equation}
+Planar layers give at least one component per layer; curved layers \cite{etienne2019curvi,zhang2022s3}, separate surfaces \cite{zhong2023acap}, and parameterisation patches \cite{ezair2018volumetric} give others. The components are those of the source, not of the part: the images $\Phi(\Xs_k)$ can touch or overlap in $\Omega$. Four kinds of interruption must be kept apart.
+
+\begin{definition}[Interruptions]
+  \label{def:topology-interruptions}
+  \leavevmode
+  \begin{itemize}
+    \item A \emph{source interruption} is a discontinuity of the traversal $\xi$; a \emph{transition} is a source interruption at which $\xi$ passes from one component to another.
+    \item A \emph{tool-path interruption} is a discontinuity of $x=\Phi\circ\xi$.
+    \item A \emph{machine interruption} is a discontinuity of the joint path $q=\Psi_g[x]$.
+    \item A \emph{deposition interruption} is a stop of the material flow during physical execution.
+  \end{itemize}
+\end{definition}
+The first three occur in deposition time; the last occurs in machine time, which also includes travel moves.
+
+\begin{proposition}[Source-component transitions]
+  \label{prop:topology-transitions}
+  Let $\Xs$ be as in \eqref{eq:topology-source}, let $\xi\in\Paths{\Xs}$ satisfy $\xi_\#\lambda^1=\mu_{\Xs}$, and suppose $\mu_{\Xs}(\Xs_k)>0$ for every $k$.
+  \begin{enumerate}[label=(\roman*)]
+    \item The traversal $\xi$ has at least $N-1$ transitions, whatever the order in which it visits the components.
+    \item Suppose $\Phi$ is continuous on each component. At a transition $t_i$, the tool path $x=\Phi\circ\xi$ has the one-sided limits $x(t_i^\pm)=\Phi(\xi(t_i^\pm))$, and it is discontinuous at $t_i$ unless
+          \begin{equation}
+            \label{eq:topology-identify}
+            \Phi\bigl(\xi(t_i^-)\bigr)=\Phi\bigl(\xi(t_i^+)\bigr).
+          \end{equation}
+  \end{enumerate}
+\end{proposition}
+\begin{proof}
+  (i) Let $0=t_0<\cdots<t_m=1$ be a partition on whose open pieces $\xi$ is continuous. The image of each piece is connected, so it lies in one component; label the piece by that component. Each component has positive mass, so by $\xi_\#\lambda^1=\mu_{\Xs}$ it is visited for a positive time, and its label appears on at least one piece. Merge consecutive pieces with the same label. The resulting sequence contains all $N$ labels, with adjacent labels distinct, so it changes label at least $N-1$ times, and each change is a transition. (ii) $\xi(t)\to\xi(t_i^-)$ within one compact component as $t\to t_i^-$, and $\Phi$ is continuous there; the same holds from the right.
+\end{proof}
+Condition~\eqref{eq:topology-identify} can hold when two components touch in $\Omega$, as adjacent patches do.
+
+
+\begin{corollary}[Separated images give tool-path interruptions]
+  \label{cor:topology-propagation}
+  Under the hypotheses of Proposition~\ref{prop:topology-transitions}(ii), suppose that $\dist\bigl(\Phi(\Xs_k),\Phi(\Xs_\ell)\bigr)\geq\Delta>0$ for all $k\neq\ell$. Then every transition is a tool-path interruption with $\|x(t_i^+)-x(t_i^-)\|\geq\Delta$, and $x$ has at least $N-1$ such interruptions.
+\end{corollary}
+\begin{proof}
+  At a transition from $\Xs_k$ to $\Xs_\ell$, the limits $x(t_i^-)\in\Phi(\Xs_k)$ and $x(t_i^+)\in\Phi(\Xs_\ell)$ are at least $\Delta$ apart. Apply Proposition~\ref{prop:topology-transitions}(i).
+\end{proof}
+
+Since $\FK$ is continuous, $q$ cannot be continuous where $x$ is not, so every tool-path interruption is a machine interruption. By the deposition-time convention of Subsection~\ref{sec:cms-spaces}, it is also a deposition interruption, crossed by a travel move with the flow off. The converse implications fail: a connected source can still have a discontinuous traversal or geometry map, and a continuous tool path can still produce machine interruptions through a branch switch or a lift that fails near a singularity \cite{yang2020coverage,zhang2021singularity}. A connected source therefore removes only the lower bound of Proposition~\ref{prop:topology-transitions}; continuity of the later maps must be certified separately, as Appendix~\ref{sec:vsfc} does for the volumetric application.
+
+For planar layers at spacing $h$ with all weights $w_k>0$, $\Phi(u,v,k)=(u,v,z_k)$ is continuous on each component and distinct layers lie at least $h$ apart, so Corollary~\ref{cor:topology-propagation} with $\Delta=h$ is the formal version of the stop count in Section~\ref{main:source}.

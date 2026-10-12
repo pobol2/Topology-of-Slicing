@@ -1,0 +1,238 @@
+{
+  "l_box": {
+    "label": "L-bracket",
+    "partition": "two boxes",
+    "run_id": "l_box-boxes-m4",
+    "record": "results/volumetric/decomposition/l_box/record.json",
+    "pieces": 2,
+    "all_solves_passed": true,
+    "failed_pieces": [],
+    "total_waypoints": 8192,
+    "waypoints_inside": 8192,
+    "waypoint_containment": 1.0,
+    "exterior_segments": 0,
+    "segments": 8190,
+    "exterior_segment_fraction": 0.0,
+    "max_sampled_excursion": 0.0,
+    "verified_convex_pieces": 2,
+    "max_upper_bound": 0.0,
+    "max_upper_bound_status": "every piece certified",
+    "partial_upper_bounds": {
+      "l_box-A": 0.0,
+      "l_box-B": 0.0
+    },
+    "partition_checks_passed": true,
+    "consistency": {
+      "all_depths_within_bounds": true,
+      "all_certificates_met_tolerance": true,
+      "pieces": [
+        {
+          "piece_id": "l_box-A",
+          "bound": 0.0,
+          "depth": 0.0,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "l_box-B",
+          "bound": 0.0,
+          "depth": 0.0,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        }
+      ]
+    }
+  },
+  "torus": {
+    "label": "Torus",
+    "partition": "CoACD-guided",
+    "run_id": "torus-coacd-m4",
+    "record": "results/volumetric/decomposition/torus/record.json",
+    "pieces": 8,
+    "all_solves_passed": true,
+    "failed_pieces": [],
+    "total_waypoints": 32768,
+    "waypoints_inside": 32244,
+    "waypoint_containment": 0.9840087890625,
+    "exterior_segments": 1707,
+    "segments": 32760,
+    "exterior_segment_fraction": 0.05210622710622711,
+    "max_sampled_excursion": 0.02317967018611412,
+    "verified_convex_pieces": 0,
+    "max_upper_bound": 0.05620915716411077,
+    "max_upper_bound_status": "every piece certified",
+    "partial_upper_bounds": {
+      "torus-p0": 0.04994503258155496,
+      "torus-p1": 0.04597069857103109,
+      "torus-p2": 0.04415358892826948,
+      "torus-p3": 0.05620915716411077,
+      "torus-p4": 0.05168231874853266,
+      "torus-p5": 0.05324944132932836,
+      "torus-p6": 0.050309573955016576,
+      "torus-p7": 0.04550470669910952
+    },
+    "partition_checks_passed": true,
+    "consistency": {
+      "all_depths_within_bounds": true,
+      "all_certificates_met_tolerance": true,
+      "pieces": [
+        {
+          "piece_id": "torus-p0",
+          "bound": 0.04994503258155496,
+          "depth": 0.019138802417948342,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p1",
+          "bound": 0.04597069857103109,
+          "depth": 0.01941419706652494,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p2",
+          "bound": 0.04415358892826948,
+          "depth": 0.01589697049995011,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p3",
+          "bound": 0.05620915716411077,
+          "depth": 0.00931719297343142,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p4",
+          "bound": 0.05168231874853266,
+          "depth": 0.011570248312787568,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p5",
+          "bound": 0.05324944132932836,
+          "depth": 0.02317967018611412,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p6",
+          "bound": 0.050309573955016576,
+          "depth": 0.012045983032700732,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "torus-p7",
+          "bound": 0.04550470669910952,
+          "depth": 0.017629355636370355,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        }
+      ]
+    }
+  },
+  "bunny": {
+    "label": "Bunny",
+    "partition": "CoACD-guided",
+    "run_id": "bunny-coacd-m4",
+    "record": "results/volumetric/decomposition/bunny/record.json",
+    "pieces": 9,
+    "all_solves_passed": true,
+    "failed_pieces": [],
+    "total_waypoints": 36864,
+    "waypoints_inside": 36414,
+    "waypoint_containment": 0.98779296875,
+    "exterior_segments": 1537,
+    "segments": 36855,
+    "exterior_segment_fraction": 0.04170397503730837,
+    "max_sampled_excursion": 0.029121546054321358,
+    "verified_convex_pieces": 0,
+    "max_upper_bound": 0.07057756832243758,
+    "max_upper_bound_status": "every piece certified",
+    "partial_upper_bounds": {
+      "bunny-p0": 0.047674355940361623,
+      "bunny-p1": 0.02319240745311065,
+      "bunny-p2": 0.04307996152000276,
+      "bunny-p3": 0.07057756832243758,
+      "bunny-p4": 0.05502307087549244,
+      "bunny-p5": 0.031232311658018187,
+      "bunny-p6": 0.0675586762529193,
+      "bunny-p7": 0.04473294314018053,
+      "bunny-p8": 0.0580292315466837
+    },
+    "partition_checks_passed": true,
+    "consistency": {
+      "all_depths_within_bounds": true,
+      "all_certificates_met_tolerance": true,
+      "pieces": [
+        {
+          "piece_id": "bunny-p0",
+          "bound": 0.047674355940361623,
+          "depth": 0.018851851383104707,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p1",
+          "bound": 0.02319240745311065,
+          "depth": 0.001576628589520307,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p2",
+          "bound": 0.04307996152000276,
+          "depth": 0.015629837361041215,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p3",
+          "bound": 0.07057756832243758,
+          "depth": 0.029121546054321358,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p4",
+          "bound": 0.05502307087549244,
+          "depth": 0.017191465552658193,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p5",
+          "bound": 0.031232311658018187,
+          "depth": 0.011993997509318286,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p6",
+          "bound": 0.0675586762529193,
+          "depth": 0.022588727930642115,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p7",
+          "bound": 0.04473294314018053,
+          "depth": 0.022144909986206517,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        },
+        {
+          "piece_id": "bunny-p8",
+          "bound": 0.0580292315466837,
+          "depth": 0.02859811559410311,
+          "depth_within_bound": true,
+          "certificate_met_tolerance": true
+        }
+      ]
+    }
+  }
+}
