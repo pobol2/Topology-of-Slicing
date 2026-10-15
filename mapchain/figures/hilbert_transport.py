@@ -7,10 +7,10 @@ import numpy as np
 from matplotlib.collections import LineCollection
 from matplotlib.path import Path as MplPath
 
+from mapchain.figures.palette import DARK, FAINT, INK, MID, TIME
 from mapchain.volumetric.hilbert import hilbert_2d
 
-EARLY, LATE = (np.array([39, 91, 135]) / 255, np.array([181, 112, 59]) / 255)
-GRID, OUTLINE, LEADER = (".86", ".25", ".45")
+GRID, OUTLINE, LEADER = (FAINT, INK, MID)
 SIDE = 4.4
 CENTRE = np.array([10.65, 2.2])
 
@@ -89,7 +89,7 @@ def draw():
         + [corners[-1:]]
     )
     t = np.linspace(0, 1, len(path) - 1)[:, None]
-    colours = (1 - t) * EARLY + t * LATE
+    colours = TIME(t[:, 0])
     for side in (left, right):
         p = side(path)
         ax.add_collection(
@@ -102,11 +102,11 @@ def draw():
                 zorder=3,
             )
         )
-    marker = dict(mec=".15", mew=0.8, zorder=5, ls="none")
+    marker = dict(mec=DARK, mew=0.8, zorder=5, ls="none")
     for cell, shape, size in (((0.5, 1.5), "o", 5), ((1.5, 2.5), "s", 5), ((3.5, 2.5), "D", 3.6)):
         for side in (left, right):
             ax.plot(*side(np.array([cell]) / 4).T, marker=shape, ms=size, mfc="white", **marker)
-    for side, label in ((left, r"$\mathcal H(t)$"), (right, r"$\Phi(\mathcal H(t))$")):
+    for side, label in ((left, r"$\bm{\upxi}(t)$"), (right, r"$\Phi(\bm{\upxi}(t))$")):
         p = side(np.array([[1.5, 2.5]]) / 4)[0]
         ax.plot(*np.c_[p + (0.08, -0.1), p + (0.25, -0.38)], color=LEADER, lw=0.5)
         ax.text(
@@ -118,7 +118,7 @@ def draw():
             bbox=dict(fc="white", ec="none", pad=1.0),
         )
     km = min(0.0, target[:, 1].min()) - 0.05
-    for cell, name, fill in (((0.5, 0.5), "Start", ".15"), ((3.5, 0.5), "End", "white")):
+    for cell, name, fill in (((0.5, 0.5), "Start", DARK), ((3.5, 0.5), "End", "white")):
         for side in (left, right):
             p = side(np.array([cell]) / 4)[0]
             ax.plot(*p, marker="o", ms=6, mfc=fill, **marker)
@@ -132,7 +132,7 @@ def draw():
         xytext=(5.15, 2.2),
         arrowprops=dict(
             arrowstyle="-|>,head_length=0.6,head_width=0.25",
-            color=".25",
+            color=INK,
             lw=0.9,
             shrinkA=0,
             shrinkB=0,
@@ -140,7 +140,7 @@ def draw():
     )
     ax.text(6.4, 2.6, r"$\Phi$", ha="center", va="center")
     ax.text(6.4, 1.8, "Geometry map", ha="center", va="center")
-    ax.text(2.2, km - 0.8, r"$\mathcal H$", ha="center", va="center")
-    ax.text(CENTRE[0], km - 0.8, r"$x=\Phi\circ\mathcal H$", ha="center", va="center")
+    ax.text(2.2, km - 0.8, r"$\bm{\upxi}$", ha="center", va="center")
+    ax.text(CENTRE[0], km - 0.8, r"$\bm{\mathrm{x}}=\Phi\circ\bm{\upxi}$", ha="center", va="center")
     ax.set(xlim=(-0.1, target[:, 0].max() + 0.1), ylim=(km - 1.1, 5.3))
     return fig

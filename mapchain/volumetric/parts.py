@@ -90,9 +90,6 @@ MESH_CREATORS: dict[str, MeshCreator] = {
 }
 
 
-CONVEX_GEOMETRIES = frozenset({"box", "cylinder", "sphere"})
-
-
 def load_or_create_mesh(
     name: str,
     models_directory: str | Path = "models",

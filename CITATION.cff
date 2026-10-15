@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this research prototype or its results, please cite this software."
-title: "The Topology of Slicing: Locating and Removing Forced Interruptions with a Map Chain - Research Prototype"
+title: "The Topology of Slicing: A Map-Chain Framework for Slicer Design - Research Prototype"
 abstract: "Research prototype demonstrating transported Hilbert paths, near-convex decomposition and kinematics-first slicing."
 authors:
   - family-names: Bolduc

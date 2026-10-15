@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.transforms import IdentityTransform
+from mpl_toolkits.mplot3d import proj3d
 from shapely.geometry import LineString, Point
 
-from mapchain.figures.draw3d import BLUE, L_PLAN, RED, axes3d, load, segs3, solid
+from mapchain.figures.draw3d import L_PLAN, PATH, RED, axes3d, load, segs3, solid
+from mapchain.figures.palette import DARK, spread
 from mapchain.volumetric.decomposition import OUT as DECOMPOSITION
-from mapchain.volumetric.decomposition import colours
 from mapchain.volumetric.parts import geometry
 
 
@@ -25,7 +28,32 @@ def clip_mesh(mesh, lo, hi):
 def box3d(ax, lo, hi, z):
     """Outline of a close-up region, drawn on top of the overview."""
     x0, y0, x1, y1 = (lo[0], lo[1], hi[0], hi[1])
-    ax.plot([x0, x1, x1, x0, x0], [y0, y0, y1, y1, y0], [z] * 5, color="k", lw=1.2, zorder=7)
+    ax.plot([x0, x1, x1, x0, x0], [y0, y0, y1, y1, y0], [z] * 5, color=DARK, lw=1.2, zorder=7)
+
+
+class ZoomLine(Line2D):
+    """Line from a point of the overview to a point of the close-up, both given in 3D data
+    coordinates; placed at draw time, after both axes have set their projections."""
+
+    def __init__(self, overview, start, closeup, end, **kw):
+        super().__init__([], [], transform=IdentityTransform(), **kw)
+        self.ends = ((overview, start), (closeup, end))
+
+    def draw(self, renderer):
+        points = []
+        for ax, p in self.ends:
+            x, y, _ = proj3d.proj_transform(*p, ax.M)
+            points.append(ax.transData.transform((x, y)))
+        self.set_data(*np.transpose(points))
+        super().draw(renderer)
+
+
+def zoom_lines(fig, overview, closeup, lo, hi, z):
+    """Join the right corners of the overview box to the left corners of the close-up."""
+    for y in (lo[1], hi[1]):
+        fig.add_artist(
+            ZoomLine(overview, (hi[0], y, z), closeup, (lo[0], y, z), color=DARK, lw=0.6, zorder=10)
+        )
 
 
 def in_box(P, lo, hi):
@@ -43,23 +71,24 @@ def closeup(fig, spec, overview, mesh, W, ext, k, inside, zr, faint, margin=0.03
         zl[:2], zh[:2] = (c[:2] - r, c[:2] + r)
     box3d(overview, zl, zh, zr[1])
     ax = axes3d(fig, spec, (zl[0], zl[1], zr[0]), (zh[0], zh[1], zr[1]), 1.2)
+    zoom_lines(fig, overview, ax, zl, zh, zr[1])
     box = in_box(W, zl, zh)
     solid(ax, clip_mesh(mesh, zl, zh), 0.1)
-    segs3(ax, W, ~ext & box, colors=BLUE, **faint)
+    segs3(ax, W, ~ext & box, colors=PATH, **faint)
     segs3(ax, W, ext & box, colors=RED, linewidths=0.7, alpha=0.5, zorder=2)
     u = np.linspace(0, 1, 300)[:, None]
     for j in k:
         seg = W[j] * (1 - u) + W[j + 1] * u
         ins = np.array([inside(q) for q in seg])
-        for run, col in ((ins, BLUE), (~ins, RED)):
+        for run, col in ((ins, PATH), (~ins, RED)):
             q = seg.copy()
             q[~run] = np.nan
             ax.plot(*q.T, color=col, lw=2.4, zorder=5)
     ax.scatter(
         *W[ends].T,
-        color=BLUE,
+        color=PATH,
         s=22,
-        edgecolor="k",
+        edgecolor=DARK,
         linewidth=0.5,
         depthshade=False,
         zorder=6,
@@ -70,7 +99,6 @@ def closeup(fig, spec, overview, mesh, W, ext, k, inside, zr, faint, margin=0.03
 def draw():
     fig = plt.figure(figsize=(6.3, 4.4))
     g = fig.add_gridspec(2, 3, wspace=0, hspace=0.06)
-    cols = colours()
     faint = dict(linewidths=0.5, alpha=0.55, zorder=2)
     lm = geometry("l_box")[0]
     l_box, LW = load("l_box", 4)
@@ -91,8 +119,9 @@ def draw():
     )
     solid(a, lm)
     solid(b, lm)
-    segs3(a, LW, ~lext, colors=BLUE, linewidths=0.12, alpha=0.6, zorder=2, rasterized=True)
+    segs3(a, LW, ~lext, colors=PATH, linewidths=0.12, alpha=0.6, zorder=2, rasterized=True)
     segs3(a, LW, lext, colors=RED, linewidths=0.8, zorder=3)
+    cols = spread(len(pieces))
     for j, P in enumerate(pieces):
         segs3(
             b,
@@ -162,8 +191,9 @@ def draw():
     )
     solid(h, tm)
     solid(f4, tm)
-    segs3(h, W4, ~ext4, colors=BLUE, linewidths=0.2, alpha=0.7, zorder=2, rasterized=True)
+    segs3(h, W4, ~ext4, colors=PATH, linewidths=0.2, alpha=0.7, zorder=2, rasterized=True)
     segs3(h, W4, ext4, colors=RED, linewidths=1, zorder=3)
+    cols = spread(len(tpieces))
     for jj, P in enumerate(tpieces):
         e = torus_ext(P)
         segs3(
@@ -193,7 +223,5 @@ def draw():
     )
     for ax, t in zip((a, z, b), ("Whole part", "Close-up", "Pieces")):
         ax.set_title(t)
-    a.text2D(-0.02, 0.5, "L-bracket", rotation=90, ha="right", va="center", transform=a.transAxes)
-    h.text2D(-0.02, 0.5, "Torus", rotation=90, ha="right", va="center", transform=h.transAxes)
     fig.subplots_adjust(left=0.04, right=1, top=0.94, bottom=0)
     return fig

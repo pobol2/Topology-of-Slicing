@@ -2,12 +2,12 @@
 \begin{papertable}
   \begin{papertabular}{lrrrrrr}
     \toprule
-    Object & Pieces & Waypoints & $\max_j U_j$ & In piece & \papertablehead{Exterior\\segments} & \papertablehead{Sampled\\depth} \\
+    Object & Pieces & Waypoints & $\max_j\gamma^{\mathrm{ub}}(\Omega_j)$ & In piece & \papertablehead{Exterior\\segments} & \papertablehead{Sampled\\depth} \\
     \midrule
     L-bracket & 2 & 8192 & $0$ & 100.00\% & 0.00\% & $0.0000$ \\
     Torus & 8 & $32\,768$ & $0.0563$ & 98.40\% & 5.21\% & $0.0232$ \\
     \bottomrule
   \end{papertabular}
-  \caption{Independent piece paths, uniform density, 4096 waypoints per piece. ``In piece'' is the percentage of waypoints inside their assigned piece; exterior segments are measured against that same piece. Depth is the largest sampled excursion; $U_j$ is the numerical hull-gap upper bound. Distances are in normalised units (Appendix~\ref{sec:implementation}).}
+  \caption{Independent piece paths, uniform density, 4096 waypoints per piece. ``In piece'' is the percentage of waypoints inside their assigned piece; exterior segments are measured against that same piece. Depth is the largest sampled excursion; $\gamma^{\mathrm{ub}}(\Omega_j)$ is the numerical upper bound on the hull gap of piece $j$. Distances are in normalised units (Appendix~\ref{sec:implementation}).}
   \label{tab:decomposition}
 \end{papertable}

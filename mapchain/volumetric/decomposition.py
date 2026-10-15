@@ -223,13 +223,6 @@ def hull_gap_bounds(surface, tol, max_cubes=2000000, max_level=20):
         centres = (centres[keep][:, None, :] + offsets[None]).reshape(-1, 3)
 
 
-def colours():
-    """tab10 without red, which marks excursions."""
-    import matplotlib.pyplot as plt
-
-    return [c for i, c in enumerate(plt.get_cmap("tab10").colors) if i != 3]
-
-
 def surfaces_from(npz):
     data = np.load(npz)
     return [

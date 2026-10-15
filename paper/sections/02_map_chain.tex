@@ -1,16 +1,14 @@
 \section{The map chain as a slicer design framework}
 \label{main:chain}
 
-A conventional slicer bundles several decisions into one algorithm. Separating them lets us compare slicers one decision at a time, trace each limit to the decision that causes it, and construct new slicers by making a decision differently.
-
 \subsection{The map chain}
-Figure~\ref{fig:main-chain} reads a slicer as a sequence of decisions. A slicer first chooses a \emph{source} $\Xs$, the space in which the path is designed: a stack of slices, a family of surface patches, or a volume. A \emph{traversal} $\xi$ then decides the order in which the source is visited over normalised deposition time $t\in[0,1]$. A \emph{geometry map} $\Phi$ places each source point in the part $\Omega\subset\mathbb R^3$, which produces the tool path. Finally, a \emph{lift} $\Psi_g$ turns the tool path into motion in the machine's configuration space $\Qs$, and the \emph{process} $\Theta$ turns that motion into the built part $\widehat\Omega$:
+Figure~\ref{fig:main-chain} reads a slicer as a sequence of decisions. A slicer first chooses a \emph{source} $\Xs$, the space in which the path is designed: a stack of slices, a family of surface patches, or a volume. A \emph{traversal} ${\vect{\upxi}}\colon[0,1]\to\Xs$ then decides the order in which the source is visited over normalised deposition time $t\in[0,1]$. A \emph{geometry map} $\Phi\colon\Xs\to\Omega$ places each source point in the part $\Omega\subset\mathbb R^3$, which produces the tool path ${\vect{x}}\colon[0,1]\to\Omega$. Finally, a \emph{lift} $\Psi_{\mathrm{g}}$, where $\mathrm{g}$ marks the geometry-first construction order, turns the tool path into the joint path ${\vect{q}}\colon[0,1]\to\Qs$ in the machine's configuration space $\Qs$, and the \emph{process} $\Theta$ turns that motion into the built part $\widehat\Omega\subset\mathbb R^3$, where a hat marks a realised or computed approximation of the unhatted object:
 \begin{equation}
   \label{eq:main-chain}
-  x(t)=\Phi(\xi(t)),\qquad q=\Psi_g[x],\qquad
-  \widehat\Omega=\Theta[q].
+  {\vect{x}}=\Phi\circ{\vect{\upxi}},\qquad {\vect{q}}=\Psi_{\mathrm{g}}[{\vect{x}}],\qquad
+  \widehat\Omega=\Theta[{\vect{q}}].
 \end{equation}
-The traversal and the geometry map act point by point. The lift and the process act on whole paths, hence the brackets, because a machine's configuration and the material it has laid down depend on what came before. The subscript $g$ records the usual order: geometry first, machine second.
+Here ${\vect{x}}(t)=\Phi({\vect{\upxi}}(t))$, so the geometry map acts pointwise; square brackets indicate that the lift and the process take whole paths as inputs.
 
 \begin{figure}[htbp]
   \centering
@@ -21,39 +19,43 @@ The traversal and the geometry map act point by point. The lift and the process 
     \node[box] (g) at (6.6,0) {Part $\Omega$};
     \node[box] (q) at (9.9,0) {Machine $\Qs$};
     \node[box] (p) at (13.2,0) {Material $\widehat\Omega$};
-    \draw[arr] (s)--node[above] {$\xi$}(v);
+    \draw[arr] (s)--node[above] {${\vect{\upxi}}$}(v);
     \draw[arr] (v)--node[above] {$\Phi$}(g);
-    \draw[arr] (g)--node[above] {$\Psi_g$}(q);
+    \draw[arr] (g)--node[above] {$\Psi_{\mathrm{g}}$}(q);
     \draw[arr] (q)--node[above] {$\Theta$}(p);
   \end{tikzpicture}
-  \caption{The map chain. Traversal and geometry act pointwise; the arrows into machine motion and material act on whole paths.}
+  \caption{The map chain, shown schematically through its underlying spaces. Traversal and geometry act pointwise; the arrows into machine motion and material act on whole paths.}
   \label{fig:main-chain}
 \end{figure}
 
-The chain also decides how much material goes where. Suppose the traversal spends its time in the source according to a distribution $\mu_{\Xs}$, and the geometry map sends $\mu_{\Xs}$ to the prescribed distribution $\mu_\Omega$ on the part. Then the tool path spends its deposition time according to $\mu_\Omega$. Writing $f_\#\mu$ for the image of a distribution $\mu$ under a map $f$, and $\lambda^1$ for uniform time,
+The chain also decides how much material goes where. Suppose the traversal spends its time in the source according to a distribution $\mu_{\Xs}$, a probability measure on $\Xs$, and the geometry map sends $\mu_{\Xs}$ to the prescribed distribution $\mu_\Omega$ on the part. Then the tool path spends its deposition time according to $\mu_\Omega$. Writing $f_\#\mu$ for the image of a distribution $\mu$ under a map $f$, and $\lambda^1$ for the uniform distribution of time on $[0,1]$ (the superscript denotes dimension),
 \begin{equation}
   \label{eq:main-measure}
-  \xi_\#\lambda^1=\mu_{\Xs},\quad \Phi_\#\mu_{\Xs}=\mu_\Omega
+  {\vect{\upxi}}_\#\lambda^1=\mu_{\Xs},\quad \Phi_\#\mu_{\Xs}=\mu_\Omega
   \quad\Longrightarrow\quad
-  x_\#\lambda^1=\mu_\Omega .
+  {\vect{x}}_\#\lambda^1=\mu_\Omega .
 \end{equation}
-With constant flow, time shares are material shares. The identity therefore states what it means for a path to cover the part with the right amount of material. Graded density needs no separate link: any chain can carry it through $\mu_{\Xs}$ or $\mu_\Omega$.
+With constant flow, time shares are material shares, so the identity states what it means for a path to cover the part with the right amount of material. Graded density needs no separate link: any chain can carry it through $\mu_{\Xs}$ or $\mu_\Omega$.
 
-A planar slicer illustrates every link. Its source is the set of separate cross-sections $\Xs=\bigsqcup_{k=1}^N(D_k\times\{k\})$. Its traversal zigzags within each slice and visits the slices in order. A gantry with tool offset $o$ then uses
-\begin{equation}
-  \label{eq:main-planar}
-  \Phi(u,v,k)=(u,v,z_k),\qquad \Psi_g[x](t)=x(t)-o,
-\end{equation}
-and the process turns the resulting motion into deposited material. The resulting distribution lives on $N$ slices, so the process must fill the gaps between them. Appendix~\ref{sec:cms-spaces} gives the precise spaces, the deposition-time convention, and the formal definition (Definition~\ref{def:cms}); there, a finite raster's source measure is the occupation measure of the zigzag rather than the ideal area measure on each slice.
+A planar slicer illustrates every link. Its source is the set of $N$ separate cross-sections, $\Xs=\bigsqcup_{j=1}^N\Xs_j$, each a planar region labelled by its layer. Its traversal zigzags within each slice and visits the slices in order, the geometry map lifts each slice to its height, the lift turns the tool path into machine motion, and the process deposits material. The resulting distribution lives on $N$ slices, so the process must fill the gaps between them. Definition~\ref{def:cms} in Appendix~\ref{sec:cms-spaces} states the chain formally.
 
-The chain is useful because guarantees attach to links. Exact distributions, continuity, containment, and error bounds compose from one link to the next; Appendix~\ref{sec:cms-composition} states the composition inequalities with proofs (Proposition~\ref{prop:composition}) and tabulates the resulting guarantees (Table~\ref{tab:cms-guarantees}). Each failure therefore has an address: a disconnected source forces transitions, a geometry map can tear the path or leave a non-convex part, a lift can switch branches near a singularity \cite{zhang2021singularity}, and the process can leave gaps. This paper stops before the process: it does not model how material is deposited. With this decomposition, each existing method becomes a combination of independently chosen links.
+\subsection{How guarantees compose}
+\label{main:compose}
+The chain is useful because guarantees attach to links and compose from one link to the next; Appendix~\ref{sec:cms-composition} states the rules with proofs (Proposition~\ref{prop:composition}) and tabulates the resulting guarantees (Table~\ref{tab:cms-guarantees}). Four rules carry the arguments of this paper.
+\begin{itemize}
+  \item \emph{Coverage.} Exact distributions compose exactly, as in \eqref{eq:main-measure}; a distribution error at one link passes through the next link's modulus of continuity and adds to that link's own error.
+  \item \emph{Continuity.} Moduli of continuity compose, and ${\vect{x}}=\Phi\circ{\vect{\upxi}}$ can be discontinuous only where the traversal is, or where it meets a discontinuity of $\Phi$.
+  \item \emph{Containment.} If each link maps into the region that the next accepts, so does the composition; this keeps a tool path in the part and a joint path in the admissible configurations.
+  \item \emph{Error propagation.} Implementation errors, such as solver tolerances, propagate in the same way, which is why the finite-order bounds of Section~\ref{main:convex} have one term per link.
+\end{itemize}
+Repairing one link does not repair another: denser sampling cannot fix a wrong geometry map, and a better lift cannot fill missing coverage. Each failure therefore has an address: a disconnected source forces transitions, a geometry map can tear the path or leave a non-convex part, a lift can switch branches near a singularity \cite{zhang2021singularity}, and the process can leave gaps. This paper stops before the process: the composed guarantees describe paths and occupation measures, not a manufactured part.
 
 \paragraph{Designing with the chain.}
-The same decomposition gives a procedure for deriving new slicers. Read an existing construction link by link and identify a choice that it holds fixed. Then either replace that choice, or change the order in which the links are constructed. Finally, use the composition rules to determine which guarantees survive the change and which become obligations for the remaining links. Sections~\ref{main:construction} and~\ref{main:next} apply this procedure to the two choices that the review below exposes.
+The same decomposition gives a procedure for deriving new slicers. Read an existing construction link by link and identify a choice that it holds fixed; replace that choice, or change the order in which the links are constructed; then use the composition rules to determine which guarantees survive and which become obligations for the remaining links. A replaced link must establish its own certificates, and a new order may need new maps rather than a rearrangement of the old ones (Section~\ref{main:next}). Sections~\ref{main:construction} and~\ref{main:next} apply this procedure to the two choices that the review below exposes.
 
 \subsection{Existing slicers as link choices}
 \label{main:families}
-Table~\ref{tab:main-families} places the reviewed slicer families in the chain and can be read in two directions. Along each row, it records which links a family changes relative to the planar chain; this is where the families differ. Down the source column, it records the source as it is actually traversed; this is where families that look very different turn out to agree. Adaptive layer height changes the spacing of the slices. Curved-layer slicers bend them through the geometry map. Multi-axis slicers change the lift, and within-layer continuous paths change the traversal inside each slice. Families often combine changes: S$^3$-Slicer, the scalar-field method, and the neural slicer target multi-axis machines and so also change $\Psi_g$ \cite{zhang2022s3,dai2018support,liu2024neural}.
+Table~\ref{tab:main-families} compares the reviewed slicer families as design choices. Each row gives the source as the family traverses it, the links it changes relative to the planar chain, and whether it constructs the tool path or the machine motion first. A row lists a family's characteristic change; families often combine changes, and S$^3$-Slicer, the scalar-field method, and the neural slicer target multi-axis machines and so also change $\Psi_{\mathrm{g}}$ \cite{zhang2022s3,dai2018support,liu2024neural}. The kinematics-first row uses $\Psi_{\mathrm{k}}$, a map from the source into machine configurations defined in Section~\ref{main:next}.
 
 \begin{papertable}
   \begin{papertabular}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{1.0cm}>{\raggedright\arraybackslash}p{3.9cm}}
@@ -62,31 +64,31 @@ Table~\ref{tab:main-families} places the reviewed slicer families in the chain a
     \midrule
     Planar (reference) & $N$ flat layers & -- & Geom. & \cite{prusaslicer} \\
     Adaptive layer height & $N$ flat layers, variable spacing & $\Xs$ & Geom. & \cite{dolenc1994slicing,pandey2003slicing,alexa2017optimal} \\
-    Within-layer continuous & $N$ flat layers & $\xi$ & Geom. & \cite{zhao2016fermat,bedel2022closed,gupta2019continuous} \\
+    Within-layer continuous & $N$ flat layers & ${\vect{\upxi}}$ & Geom. & \cite{zhao2016fermat,bedel2022closed,gupta2019continuous} \\
     Curved layers & $N$ curved layers & $\Phi$ & Geom. & \cite{etienne2019curvi,zhang2022s3} \\
-    Multi-axis & $N$ layers or surfaces & $\Psi_g$ & Geom. & \cite{chalvin2020layer,schmitz2021robot,zhang2021singularity} \\
+    Multi-axis & $N$ layers or surfaces & $\Psi_{\mathrm{g}}$ & Geom. & \cite{chalvin2020layer,schmitz2021robot,zhang2021singularity} \\
     Scalar-field & $N$ level surfaces & $\Xs$, $\Phi$ & Geom. & \cite{dai2018support} \\
     Trivariate & Parameter volume, visited surface by surface & $\Xs$, $\Phi$ & Geom. & \cite{ezair2018volumetric} \\
     Neural mappings & $N$ learned curved layers & $\Phi$ & Geom. & \cite{liu2024neural,dutta2025implicit} \\
-    Surface paths & $N$ surface patches & $\Xs$, $\xi$ & Geom. & \cite{zhong2023acap} \\
-    Vase mode & One surface (a single wall) & $\Xs$, $\xi$, $\Phi$ & Geom. & \cite{prusaslicer} \\
+    Surface paths & $N$ surface patches & $\Xs$, ${\vect{\upxi}}$ & Geom. & \cite{zhong2023acap} \\
+    Vase mode & One surface (a single wall) & $\Xs$, ${\vect{\upxi}}$, $\Phi$ & Geom. & \cite{prusaslicer} \\
     \midrule
-    Transported Hilbert path & One solid volume, or $k$ volumes if decomposed & $\Xs$, $\xi$, $\Phi$ & Geom. & This paper, Sections~\ref{main:construction}--\ref{main:evidence} \\
-    Kinematics-first & $c$ patches, one per posture sheet & $\Xs$, $\Psi_k$ & Kin. & This paper, Section~\ref{main:next} \\
+    Transported Hilbert path & One solid volume, or $N$ volumes if decomposed & $\Xs$, ${\vect{\upxi}}$, $\Phi$ & Geom. & This paper, Sections~\ref{main:construction}--\ref{main:evidence} \\
+    Kinematics-first & $c$ patches, one per posture sheet & $\Xs$, $\Psi_{\mathrm{k}}$ & Kin. & This paper, Section~\ref{main:next} \\
     \bottomrule
   \end{papertabular}
-  \caption{Slicer families as choices of links, relative to the planar chain. The source column is the source as it is actually traversed; the order column records whether the tool path (Geom.) or the machine motion (Kin.) is constructed first. Every reviewed family above the rule builds geometry first, and every solid-filling one traverses separate layers or surfaces. The table is representative, not exhaustive. Below the rule are the two constructions of this paper: the first changes the source; the second changes the construction order, and its map $\Psi_k$ into configurations takes the place of both $\Phi$ and $\Psi_g$.}
+  \caption{Slicer families compared as design choices: the links each changes relative to the planar chain, and its construction order. The source column is the source as it is actually traversed; the order column records whether the tool path (Geom.) or the machine motion (Kin.) is constructed first. Every reviewed family above the rule builds geometry first, and every solid-filling one traverses separate layers or surfaces. The table is representative, not exhaustive. Below the rule are the two constructions of this paper: the first changes the source; the second changes the construction order, and its map $\Psi_{\mathrm{k}}$ into configurations takes the place of both $\Phi$ and $\Psi_{\mathrm{g}}$.}
   \label{tab:main-families}
 \end{papertable}
 
-Two choices remain shared across the reviewed families. All of them build geometry first. And every solid-filling family among them traverses its source as $N$ separate pieces. A volumetric representation does not change this second choice. The trivariate method parameterises a volume but still visits it surface by surface \cite{ezair2018volumetric}, and volumetric frame fields \cite{chermain2025atomizer} and implicit neural fields \cite{dutta2025implicit} likewise describe the solid as a volume but print it as layers or surfaces. Conversely, the many methods that remove travel by a better order, such as Fermat spirals and the continuous planners of wire-arc manufacturing \cite{zhao2016fermat,ding2015practical,diourte2021ctpp}, improve the traversal inside each piece of the source, not the source itself. These shared choices leave two alternatives absent from the reviewed slicing methods: traversing a connected volume, and constructing the machine motion before the tool path. The first concerns the source, whose disconnection carries a cost that no other link can pay back, as the next subsection shows; the second concerns the order of construction (Section~\ref{main:next}).
+Families that look very different agree on two choices: all build geometry first, and every solid-filling family traverses its source as $N$ separate pieces. Representing the solid as a volume does not change the second choice, because representing a volume is not traversing it. The trivariate method parameterises a volume but visits it surface by surface \cite{ezair2018volumetric}, and volumetric frame fields \cite{chermain2025atomizer} and implicit neural fields \cite{dutta2025implicit} likewise describe the solid as a volume but print it as layers or surfaces. Two alternatives are therefore absent from the reviewed methods, and they motivate the two applications of this paper: traversing a connected volume, and constructing the machine motion before the tool path. The first concerns the source, whose disconnection carries a cost that no other link can pay back, as the next subsection shows; the second concerns the order of construction (Section~\ref{main:next}).
 
-\subsection{The hidden limit: pieces force stops}
+\subsection{A topological consequence: pieces force transitions}
 \label{main:source}
-Let the source have $N$ separate pieces, each receiving positive deposition time. Any traversal that is continuous except at finitely many times then makes at least $N-1$ \emph{transitions} between pieces, in whatever order it visits them; Appendix~\ref{sec:topology} proves this bound (Proposition~\ref{prop:topology-transitions}) and its consequence for separated images. This is the counting argument of Section~\ref{sec:introduction}: a better order shortens the moves but cannot reduce their number. Section~\ref{main:next} applies it again at the machine link.
+The composition rules give upper bounds: they say where a path can be interrupted. The topology of the source supplies a matching lower bound. Let the source have $N$ separate pieces, each receiving positive deposition time. Any traversal that is continuous except at finitely many times then makes at least $N-1$ \emph{transitions} between pieces, in whatever order it visits them (Proposition~\ref{prop:topology-transitions}, Appendix~\ref{sec:topology}). A better order shortens the moves but cannot reduce their number. Section~\ref{main:next} applies the same counting argument at the machine link.
 
-A transition is an event in the source; its effect on the machine depends on the later links. When the mapped pieces do not touch, a transition becomes a break of the tool path. A break forces a \emph{stop}: a break occupies no deposition time, so the machine crosses it with a travel move during which the flow is switched off. For layers, every transition is a stop, because distinct layers lie at least the layer spacing $h$ apart (Corollary~\ref{cor:topology-propagation}).
+A transition is an event in the source, not yet a stop; its effect on the machine depends on the later links. Where two mapped pieces touch, a transition can be crossed continuously in the part, as between adjacent patches. When the geometry map is continuous on each piece and the mapped pieces do not touch, a transition becomes a break of the tool path. A break forces a \emph{stop}: a break occupies no deposition time, so the machine crosses it with a travel move during which the flow is switched off. For layers, every transition is a stop, because distinct layers lie at least the layer spacing $h$ apart (Corollary~\ref{cor:topology-propagation}).
 
-The stop count of a layered slicer therefore grows with resolution. A part of height $H$ needs at least $H/h-1$ stops: a 100~mm part has 500 layers and at least 499 stops at a layer spacing of 0.2~mm, and at least 999 stops at 0.1~mm. Disconnected cross-sections add more. No reviewed family in Table~\ref{tab:main-families} lowers this count. Continuous within-layer paths act inside each piece, curved layers and surface patches are still separate pieces, and multi-axis lifts act after the source is fixed. Vase mode escapes with a connected surface, but it prints a single wall \cite{prusaslicer}.
+The stop count of a layered slicer therefore grows with resolution: a part needs at least one stop fewer than it has layers, so for a fixed part height, halving the layer spacing approximately doubles the lower bound, and disconnected cross-sections can add further transitions.
 
-This diagnosis is the first step of the design procedure: since stops originate in the source, the source itself must change. The simplest replacement for a solid is a single connected volume. The composition rules then say what the change costs: a connected source removes forced transitions only if a traversal can visit it continuously and a geometry map can carry it into the part without tearing it apart again. Section~\ref{main:construction} constructs the first algorithm by meeting these two obligations.
+Since these stops originate in the source, the design procedure changes the source, and the simplest replacement for a solid is a single connected volume. The composition rules state the cost: a connected source removes forced transitions only if a traversal can visit it continuously and a geometry map can carry it into the part without tearing it apart again. Section~\ref{main:construction} meets these two obligations.

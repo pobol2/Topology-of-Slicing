@@ -1,4 +1,4 @@
-# The Topology of Slicing: Locating and Removing Forced Interruptions with a Map Chain
+# The Topology of Slicing: A Map-Chain Framework for Slicer Design
 
 Pierre-Olivier Bolduc, 2026. **[Paper (PDF)](paper/main.pdf)**
 
@@ -6,34 +6,37 @@ This repository holds the paper and the code behind it: transported Hilbert path
 near-convex decomposition, the planar 3R comparison, and every figure and generated
 table in the paper.
 
-[![Whole-part and decomposed Hilbert paths transported into the Stanford Bunny](paper/figures/bunny_transport_decomposition.png)](paper/figures/bunny_transport_decomposition.pdf)
+[![Decomposed and whole-part Hilbert paths transported into the Stanford Bunny](paper/figures/bunny_transport_decomposition.png)](paper/figures/bunny_transport_decomposition.pdf)
 
-Hilbert paths transported into the Stanford Bunny: one whole-part source (top),
-and nine independent source pieces (bottom). [Figure PDF](paper/figures/bunny_transport_decomposition.pdf).
+Hilbert paths transported into the Stanford Bunny: nine independent source pieces
+(top), and one whole-part source (bottom). [Figure PDF](paper/figures/bunny_transport_decomposition.pdf).
 
 ## Abstract
 
-Some interruptions of a tool path are chosen by the planner; others are forced by the
-slicer's structure. We describe a slicer as a chain of maps, from a source through the
-part and the machine to the built part, and use the chain to locate forced interruptions
-and design around them. The obstruction is topological: a plan that must visit $c$ path
-components is interrupted at least $c-1$ times, and the chain identifies the link that
-supplies them. At the source, every reviewed solid-filling slicer traverses separate
-layers or surfaces, so its stops grow with resolution. Replacing the source by one
-connected volume, traversed by a three-dimensional Hilbert curve and carried into the
-part by optimal transport, gives a continuous path with the prescribed occupation
-measure on convex parts. In a computational prototype, it makes no stops on convex
-parts, where a layered raster's stops roughly double with resolution; on non-convex
-parts, a source split into near-convex pieces trades a fixed number of transitions for
-bounded excursions. At the machine, the components are the posture sheets of the
-robot's safe configurations, and a slicer that fixes the tool path first inherits the
-posture switches that path forces. Reversing the construction order gives
-kinematics-first slicing, in which the sheets guide the source split. On a three-link
-planar arm among obstacles, it makes the single posture reset required by the bound in
-a sampled availability model, while a geometry-first baseline makes two. The two
-constructions serve as demonstrations of the framework: one counting argument bounds
-both stops and posture switches, and in both a source split matched to the components
-attains the minimum.
+A slicer bundles several decisions into one algorithm: which source to traverse, in
+what order, how to place it in the part, how to move the machine, and how to deposit
+material. Two slicers therefore differ in several decisions at once, and a limit they
+share can go unnoticed. We describe a slicer as a chain of maps, from a source through
+the part and the machine to the built part. Each decision becomes a link, and
+guarantees of coverage, continuity, and containment, together with bounds on
+implementation error, compose along the chain. The chain gives slicers a common
+description, traces each guarantee or failure to the link that supplies it, and yields
+new slicers by changing a link or the order in which the links are built, with the
+composition rules stating which guarantees survive and which become obligations. We
+demonstrate the framework on forced interruptions, which are topological: a plan that
+must visit $c$ path components is interrupted at least $c-1$ times. At the source,
+every reviewed solid-filling slicer traverses separate layers or surfaces, so its stops
+grow with resolution. Replacing the source by one connected volume, ordered by a
+three-dimensional Hilbert curve and carried into the part by optimal transport, gives a
+continuous path with the prescribed occupation measure on convex parts. In a
+computational prototype, this path makes no stops on convex parts, where a layered
+raster's stops roughly double with resolution; on non-convex parts, splitting the
+source into near-convex pieces trades a fixed number of transitions for bounded
+excursions. At the machine, the components are the posture sheets of the robot's safe
+configurations. Reversing the construction order gives kinematics-first slicing, in
+which the sheets guide the source split: on a three-link planar arm among obstacles, it
+makes the two sheet switches that the bound requires in a sampled availability model,
+whereas a geometry-first baseline makes four.
 
 ## Setup
 
@@ -92,8 +95,9 @@ targets are the cylinder, sphere, torus, L-bracket (`l_box`) and a genus-3 compl
 part. Piece paths are order four; the order-three torus pieces match the 4096-waypoint
 figure budget. Higher orders take substantial time and memory.
 
-The 3R comparison uses links `(1, .5, .5)`, radii 1.60-1.85 and tool angles from -30
-to 30 degrees, with uniform and gradient density at orders two to four. Posture resets
+The 3R comparison uses unit links `(1, 1, 1)`, three disk obstacles, radii 2.35-2.7
+and tool angles from -45 to 45 degrees, with uniform and gradient density at orders
+three to five. Posture resets
 are discrete; collision bounds apply to continuous stretches. Hull-gap bounds are
 numerical; segment containment, fibre availability, coverage, density and tracking are
 sampled.
@@ -110,16 +114,6 @@ Requires a TeX distribution with `latexmk`, pdfLaTeX and BibTeX. From `paper/`:
 ```sh
 latexmk -pdf main.tex
 ```
-
-To rebuild the PDF automatically whenever the paper's sources, bibliography,
-styles or included figures change, run from the repository root:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File paper/watch.ps1
-```
-
-Leave the watcher running while editing; press Ctrl+C to stop it. It writes
-`paper/main.pdf` after each successful build without opening a PDF viewer.
 
 The PDF is written to `paper/main.pdf`. Auxiliary files and the TikZ cache stay in
 `paper/build/`, which is created automatically and can be deleted at any time. The
@@ -185,7 +179,7 @@ paper/
 ```bibtex
 @misc{bolduc2026topology,
   author = {Bolduc, Pierre-Olivier},
-  title  = {The Topology of Slicing: Locating and Removing Forced Interruptions with a Map Chain},
+  title  = {The Topology of Slicing: A Map-Chain Framework for Slicer Design},
   year   = {2026},
   month  = oct
 }

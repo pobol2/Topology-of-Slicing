@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mapchain.figures.draw3d import RED, axes3d, edges, load, segs3
+from mapchain.figures.palette import DARK, EDGE, TIME
 from mapchain.volumetric.parts import geometry
 
 
@@ -27,13 +28,15 @@ def draw():
     mesh = geometry("box")[0]
     lo, hi = mesh.bounds
     P = box_raster(4, lo, hi)
-    TEAL, NAVY = ("#00897b", "#2f5f8a")
     fig = plt.figure(figsize=(6.3, 3.3))
     for n, (Q, title) in enumerate(((P, "(a) Layered raster"), (T, "(b) Volumetric path"))):
         ax = axes3d(fig, 121 + n, lo, hi, zoom=1.1, view=(10, -62))
-        edges(ax, mesh, colors="0.7", linewidths=0.6)
+        edges(ax, mesh, colors=EDGE, linewidths=0.6)
         vertical = np.abs(np.diff(Q[:, 2])) > np.hypot(*np.diff(Q[:, :2], axis=0).T)
-        segs3(ax, Q, ~vertical, colors=NAVY, linewidths=1.3, zorder=2)
+        # Colour by traversal time t, as in every figure that shows it.
+        t = np.linspace(0, 1, len(Q))
+        segment = TIME((t[:-1] + t[1:]) / 2)
+        segs3(ax, Q, ~vertical, colors=segment[~vertical], linewidths=1.3, zorder=2)
         if n == 0:
             segs3(
                 ax,
@@ -45,12 +48,18 @@ def draw():
                 zorder=3,
             )
         else:
-            segs3(ax, Q, vertical, colors=TEAL, linewidths=2.2, zorder=3)
-        ax.scatter(*Q.T, color=NAVY, s=7, depthshade=False, zorder=4)
+            segs3(ax, Q, vertical, colors=segment[vertical], linewidths=1.3, zorder=2)
+        ax.scatter(*Q.T, color=TIME(t), s=7, depthshade=False, zorder=4)
         ax.scatter(
-            *Q[0], s=45, facecolor="white", edgecolor="k", linewidth=1.2, depthshade=False, zorder=5
+            *Q[0],
+            s=45,
+            facecolor="white",
+            edgecolor=DARK,
+            linewidth=1.2,
+            depthshade=False,
+            zorder=5,
         )
-        ax.scatter(*Q[-1], s=30, marker="s", color="k", depthshade=False, zorder=5)
+        ax.scatter(*Q[-1], s=30, marker="s", color=DARK, depthshade=False, zorder=5)
         ax.set_title(title)
     fig.subplots_adjust(left=0, right=1, wspace=0, top=0.92, bottom=0)
     return fig

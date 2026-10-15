@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mapchain"
 version = "0.1.0"
-description = "Research prototype for 'The Topology of Slicing: Locating and Removing Forced Interruptions with a Map Chain'."
+description = "Research prototype for 'The Topology of Slicing: A Map-Chain Framework for Slicer Design'."
 authors = [{ name = "Pierre-Olivier Bolduc" }]
 readme = "README.md"
 license = "MIT"

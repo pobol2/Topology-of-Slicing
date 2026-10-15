@@ -19,6 +19,7 @@ from scipy.optimize import linear_sum_assignment
 from mapchain import store
 from mapchain.evaluation.metrics import exterior_segments
 from mapchain.evaluation.whole_part import uniform_path, waypoints
+from mapchain.figures.palette import GRAY, TIME, piece_shades
 from mapchain.figures.style import MORPH_CAMERA_FOCUS, MORPH_CAMERA_POSITION
 from mapchain.volumetric.decomposition import OUT as DECOMPOSITION
 from mapchain.volumetric.hilbert import hilbert_3d
@@ -48,11 +49,11 @@ def add_outline(plotter, kind, bounds=None):
         mesh = normalize_mesh_to_unit_cube(load_or_create_mesh(kind, store.ROOT / "models"))
         faces = np.column_stack((np.full(len(mesh.faces), 3), mesh.faces)).ravel()
         surface = pv.PolyData(np.asarray(mesh.vertices), faces)
-        plotter.add_silhouette(surface, color="#707780", opacity=0.4, line_width=1.5)
+        plotter.add_silhouette(surface, color=GRAY, opacity=0.4, line_width=1.5)
     for points in curves:
         line = pv.PolyData(points)
         line.lines = np.r_[len(points), np.arange(len(points))]
-        plotter.add_mesh(line, color="#707780", opacity=0.4, line_width=1.5, lighting=False)
+        plotter.add_mesh(line, color=GRAY, opacity=0.4, line_width=1.5, lighting=False)
 
 
 def render_tube(
@@ -65,7 +66,9 @@ def render_tube(
     path_lengths=None,
     cube_bounds=None,
     radius=None,
+    colours=None,
 ):
+    """Tube along the path, coloured by traversal time, or by per-point RGB `colours`."""
     path = pv.PolyData(points)
     if path_lengths is not None:
         if keep is not None:
@@ -86,6 +89,8 @@ def render_tube(
             [np.r_[len(run) + 1, run, run[-1] + 1] for run in runs if len(run)]
         )
     path.point_data["t"] = time
+    if colours is not None:
+        path.point_data["rgb"] = np.round(255 * np.asarray(colours)).astype(np.uint8)
     tube = path.tube(
         radius=radius if radius is not None else 0.0014 * 2 ** (5 - order), n_sides=8, capping=True
     )
@@ -93,9 +98,11 @@ def render_tube(
     plotter.set_background("white")
     plotter.add_mesh(
         tube,
-        scalars="t",
-        cmap="viridis",
-        clim=(0, 1),
+        **(
+            dict(scalars="rgb", rgb=True)
+            if colours is not None
+            else dict(scalars="t", cmap=TIME, clim=(0, 1))
+        ),
         show_scalar_bar=False,
         smooth_shading=True,
         ambient=0.55,
@@ -185,9 +192,8 @@ def whole_main(argv=None):
     print(f"Omitting {removed} exterior target segments for display only.", flush=True)
     time = np.linspace(0, 1, len(source))
     values = [0, 0.25, 0.5, 0.75, 1]
-    labels = ["0", "\\frac{1}{4}", "\\frac{1}{2}", "\\frac{3}{4}", "1"]
     fig = plt.figure(figsize=(12, 3.4))
-    for i, (s, label) in enumerate(zip(values, labels)):
+    for i, s in enumerate(values):
         points = (1 - s) * source + s * target
         print(f"Rendering s={s:g}: {len(points)} waypoints", flush=True)
         outline = "cube" if s == 0 else part if s == 1 else None
@@ -197,18 +203,16 @@ def whole_main(argv=None):
         ax = fig.add_axes([0.005 + i * 0.2, 0.28, 0.19, 0.6])
         ax.imshow(image)
         ax.set_axis_off()
-        ax.set_title(f"$s={label}$", fontsize=18, pad=0, loc="center")
-    cax = fig.add_axes([0.005, 0.16, 0.99, 0.055])
+    # Bar from the first to the last column centre, so each tick sits under its image.
+    cax = fig.add_axes([0.1, 0.16, 0.8, 0.055])
     bar = fig.colorbar(
-        ScalarMappable(norm=Normalize(0, 1), cmap="viridis"),
+        ScalarMappable(norm=Normalize(0, 1), cmap=TIME),
         cax=cax,
         orientation="horizontal",
         ticks=[0, 0.25, 0.5, 0.75, 1],
     )
     bar.outline.set_linewidth(0.4)
     bar.ax.tick_params(labelsize=14, length=3, pad=3)
-    bar.ax.get_xticklabels()[0].set_ha("left")
-    bar.ax.get_xticklabels()[-1].set_ha("right")
     bar.set_label("Traversal time $t$", fontsize=16, labelpad=4)
     fig.savefig(
         output,
@@ -264,49 +268,48 @@ def load_paths(folder, part="torus"):
 
 
 def combine_rows(whole, decomposition, output, part="torus", piece_count=8):
-    """Stack aligned morph images with one set of stage labels and one bottom bar."""
+    """Stack aligned morph images with one bottom bar: the decomposition morph in the
+    top row, the whole-part morph below it, columns at the bar's ticks."""
     result = fitz.open()
     with fitz.open(whole) as top, fitz.open(decomposition) as bottom:
         width = top[0].rect.width
-        frames = [
-            (item[0], bottom[0].get_image_rects(item[0])[0])
-            for item in bottom[0].get_images()
-            if item[2] == item[3]
-        ]
-        assert len(frames) == 5
-        first_y = min((rect.y0 for _, rect in frames))
-        last_y = max((rect.y1 for _, rect in frames))
-        top_frames = [
-            rect
-            for item in top[0].get_images()
-            if item[2] == item[3]
-            for rect in top[0].get_image_rects(item[0])
-        ]
-        top_height = max(rect.y1 for rect in top_frames) + 2
+
+        def frames_of(doc):
+            found = [
+                (item[0], rect)
+                for item in doc[0].get_images()
+                if item[2] == item[3]
+                for rect in doc[0].get_image_rects(item[0])
+            ]
+            assert len(found) == 5
+            return sorted(found, key=lambda frame: frame[1].x0)
+
+        whole_frames, piece_frames = (frames_of(top), frames_of(bottom))
+        first_y = min(rect.y0 for _, rect in piece_frames)
+        last_y = max(rect.y1 for _, rect in piece_frames)
         gap = 4.0
         scale = width / bottom[0].rect.width
         image_height = (last_y - first_y) * scale
         bar_start = last_y + 2
         bar_height = (bottom[0].rect.height - bar_start) * scale
-        page = result.new_page(width=width, height=top_height + gap + image_height + bar_height)
-        top[0].add_redact_annot(fitz.Rect(0, top_height, width, top[0].rect.height))
-        top[0].apply_redactions()
-        page.show_pdf_page(
-            fitz.Rect(0, 0, width, top_height), top, 0, clip=fitz.Rect(0, 0, width, top_height)
+        page = result.new_page(width=width, height=2 * image_height + gap + bar_height)
+        rows = (
+            (0.0, [bottom.extract_image(xref)["image"] for xref, _ in piece_frames]),
+            (image_height + gap, [top.extract_image(xref)["image"] for xref, _ in whole_frames]),
         )
-        lower_y = top_height + gap
-        for xref, rect in frames:
-            destination = fitz.Rect(
-                rect.x0 * scale,
-                lower_y + (rect.y0 - first_y) * scale,
-                rect.x1 * scale,
-                lower_y + (rect.y1 - first_y) * scale,
-            )
-            page.insert_image(destination, stream=bottom.extract_image(xref)["image"])
+        for y, images in rows:
+            for image, (_, rect) in zip(images, piece_frames):
+                destination = fitz.Rect(
+                    rect.x0 * scale,
+                    y + (rect.y0 - first_y) * scale,
+                    rect.x1 * scale,
+                    y + (rect.y1 - first_y) * scale,
+                )
+                page.insert_image(destination, stream=image)
         bottom[0].add_redact_annot(fitz.Rect(0, 0, bottom[0].rect.width, bar_start))
         bottom[0].apply_redactions()
         page.show_pdf_page(
-            fitz.Rect(0, lower_y + image_height, width, page.rect.height),
+            fitz.Rect(0, 2 * image_height + gap, width, page.rect.height),
             bottom,
             0,
             clip=fitz.Rect(0, bar_start, bottom[0].rect.width, bottom[0].rect.height),
@@ -314,7 +317,7 @@ def combine_rows(whole, decomposition, output, part="torus", piece_count=8):
     result.set_metadata(
         {
             "title": f"Whole-part and decomposed {part} morphs",
-            "subject": f"Whole-part order 5; {piece_count} independent order-4 lower-row paths; no joins",
+            "subject": f"{piece_count} independent order-4 top-row paths; whole-part order 5 below; no joins",
         }
     )
     result.save(output)
@@ -322,7 +325,7 @@ def combine_rows(whole, decomposition, output, part="torus", piece_count=8):
 
 
 def pieces_main(argv=None):
-    """Render the morph of the decomposed part and stack it under the whole-part morph."""
+    """Render the morph of the decomposed part and stack it above the whole-part morph."""
     parser = argparse.ArgumentParser(description=pieces_main.__doc__)
     parser.add_argument("--part", choices=("torus", "bunny"), default="torus")
     parser.add_argument("--folder", type=Path)
@@ -341,10 +344,11 @@ def pieces_main(argv=None):
     lengths = [len(p) for p in targets]
     source, target, time = map(np.concatenate, (sources, targets, times))
     segments = sum(n - 1 for n in lengths)
+    # Each piece in its own colour, light to dark along that piece's own traversal.
+    colours = np.vstack([piece_shades(j, len(lengths), n) for j, n in enumerate(lengths)])
     fig = plt.figure(figsize=(12, 3.4))
     values = [0, 0.25, 0.5, 0.75, 1]
-    labels = ["0", "\\frac{1}{4}", "\\frac{1}{2}", "\\frac{3}{4}", "1"]
-    for i, (s, label) in enumerate(zip(values, labels)):
+    for i, s in enumerate(values):
         print(
             f"Rendering {args.part} decomposition s={s:g}: {len(lengths)} independent paths",
             flush=True,
@@ -356,22 +360,21 @@ def pieces_main(argv=None):
             path_lengths=lengths,
             cube_bounds=bounds if s == 0 else None,
             radius=0.0014,
+            colours=colours,
         )
         ax = fig.add_axes([0.005 + i * 0.2, 0.28, 0.19, 0.6])
         ax.imshow(image)
         ax.set_axis_off()
-        ax.set_title(f"$s={label}$", fontsize=18, pad=0, loc="center")
-    cax = fig.add_axes([0.005, 0.16, 0.99, 0.055])
+    # Bar from the first to the last column centre, so each tick sits under its image.
+    cax = fig.add_axes([0.1, 0.16, 0.8, 0.055])
     bar = fig.colorbar(
-        ScalarMappable(norm=Normalize(0, 1), cmap="viridis"),
+        ScalarMappable(norm=Normalize(0, 1), cmap=TIME),
         cax=cax,
         orientation="horizontal",
         ticks=values,
     )
     bar.outline.set_linewidth(0.4)
     bar.ax.tick_params(labelsize=14, length=3, pad=3)
-    bar.ax.get_xticklabels()[0].set_ha("left")
-    bar.ax.get_xticklabels()[-1].set_ha("right")
     bar.set_label("Traversal time $t$", fontsize=16, labelpad=4)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(

@@ -11,7 +11,6 @@ import numpy as np
 from mapchain import store
 from mapchain.figures import three_link_posture_comparison as figure
 from mapchain.kinematics.arm import (
-    LINKS,
     NR,
     NT,
     OBSTACLES,
@@ -23,23 +22,27 @@ from mapchain.kinematics.arm import (
     joints,
     workspace,
 )
-from mapchain.kinematics.sheets import OUT, availability, component_of, evaluate, wrist_ik
+from mapchain.kinematics.sheets import (
+    HANDOFF_ROOM,
+    OUT,
+    RADII,
+    availability,
+    evaluate,
+    fewest_switches,
+    memberships,
+    tracks,
+    wrist_ik,
+)
 
 
 def check_plans():
     """Saved plans: geometry, fibre labels, certified stretches, switch counts and metrics."""
     result = json.loads((OUT / "results.json").read_text())
     fibre = dict(np.load(OUT / "fibre.npz"))
-    assert result["orders"] == [2, 3, 4]
-    assert len(OBSTACLES) == 3
-    assert LINKS == (1.0, 0.5, 0.5)
-    assert np.allclose(
-        OBSTACLES, [[0.9, np.sqrt(0.19), 0.2], [0.9, -np.sqrt(0.19), 0.2], [1.35, 0.1, 0.1]]
-    )
-    assert RMIN == 1.6 and RMAX == 1.85
-    assert np.isclose(np.linalg.norm(workspace([0.0, 0.5])), 1.6)
-    assert np.isclose(np.linalg.norm(workspace([1.0, 0.5])), 1.85)
-    assert np.allclose(fibre["radii"], [1.6, 1.75, 1.8, 1.85])
+    assert result["orders"] == [3, 4, 5]
+    assert np.isclose(np.linalg.norm(workspace([0.0, 0.5])), RMIN)
+    assert np.isclose(np.linalg.norm(workspace([1.0, 0.5])), RMAX)
+    assert np.allclose(fibre["radii"], np.linspace(RMIN, RMAX, RADII))
     q_test = np.array([0.1, -0.5, 0.6])
     distances = Collision(OBSTACLES).distances(q_test).reshape(3, 3)
     points = joints(q_test)
@@ -49,22 +52,26 @@ def check_plans():
             d = b - a
             t = np.clip((np.array([cx, cy]) - a) @ d / (d @ d), 0, 1)
             assert np.isclose(distances[io, link], np.linalg.norm(a + t * d - [cx, cy]) - radius)
-    assert np.all(fibre["selected"][:, 0] != fibre["selected"][:, 1])
-    assert result["fibre"]["safe_elbow_seam_joins"] > 0
-    lo, hi = result["fibre"]["common_overlap_degrees"]
-    assert lo < result["split_phi_degrees"] < hi
+    k = fibre["selected"].shape[1]
+    assert k == result["fibre"]["chain_length"] == len(result["family_bands"])
+    curves = np.array(result["fibre"]["handoff_curves"]).reshape(k - 1, len(fibre["radii"]))
+    assert np.all(np.diff(curves, axis=0) > 0)
+    for overlap, curve in zip(result["fibre"]["common_overlap_degrees"], curves):
+        lo, hi = np.array(overlap).T
+        assert np.all((lo < curve) & (curve < hi))
+    assert min(result["fibre"]["handoff_clearance"], default=np.inf) >= HANDOFF_ROOM
     for ir, r in enumerate(fibre["radii"]):
         for branch, sign in enumerate((-1, 1)):
-            for family in (0, 1):
+            for family in range(k):
                 i, j = np.where(fibre["labels"][ir, branch] == fibre["selected"][ir, family])
                 indices = np.linspace(0, len(i) - 1, min(300, len(i))).astype(int)
                 x = r * np.stack(
                     (np.cos(fibre["phi"][i[indices]]), np.sin(fibre["phi"][i[indices]])), -1
                 )
                 q, _ = wrist_ik(x, fibre["psi"][j[indices]], sign)
-                assert np.all(component_of(q, x) == family)
+                assert np.all(memberships(q, x)[..., family])
                 assert np.all(Collision(OBSTACLES).clearance(q) > 0)
-    for family in (0, 1):
+    for family in range(k):
         data = np.load(OUT / f"patch_{family}.npz")
         q = data["q"]
         faces = []
@@ -89,10 +96,17 @@ def check_plans():
         )
         assert len(ids) == 4**order
         assert len(breaks) == len(q) - 1
-        assert np.array_equal(np.diff(family) != 0, breaks)
-        assert int(breaks.sum()) == row["switches"]
+        # Every sheet change is a reset; an in-sheet reset is a reset without one.
+        assert not np.any((np.diff(family) != 0) & ~breaks)
+        assert int((np.diff(family) != 0).sum()) == row["switches"]
+        assert int(breaks.sum()) == row["switches"] + row["in_sheet_resets"]
         assert np.max(abs(q)) <= np.pi
-        assert np.all(component_of(q, forward(q)) == family)
+        kind = "chain" if method == "kinematics" else "sheets"
+        assert np.all(np.take_along_axis(memberships(q, forward(q), kind), family[:, None], -1))
+        x_all = forward(q)
+        for i in np.flatnonzero(~breaks):
+            assert tracks(q[i], q[i + 1], x_all[i], x_all[i + 1]), (method, order, density, i)
+        assert row["sampled_target_excursion"] < 0.002
         cuts = np.r_[0, np.flatnonzero(breaks) + 1, len(q)]
         for a, b in zip(cuts[:-1], cuts[1:]):
             assert b - a >= 2
@@ -106,19 +120,17 @@ def check_plans():
         assert row["maximum_reset_tool_displacement"] < 0.002
         assert "plan_seconds" in row and row["plan_seconds"] >= 0
         if method == "kinematics":
-            assert row["switches"] == 1
-            assert np.all(family[ids[: row["lower_waypoint_count"]]] == 0)
-            assert np.all(family[ids[row["lower_waypoint_count"] :]] == 1)
+            assert row["switches"] == k - 1
+            counts = np.cumsum([0, *row["family_waypoint_counts"]])
+            for f in range(k):
+                assert np.all(family[ids[counts[f] : counts[f + 1]]] == f)
         else:
             available = data["availability"]
             forced = np.where(available.sum(axis=1) == 1, available.argmax(axis=1), -1)
             assert np.array_equal(forced, data["forced_family"])
-            sequence = forced[forced >= 0]
-            minimum = int(np.count_nonzero(np.diff(sequence)))
-            costs = np.where(available[0], 0, 10**6)
-            for allowed in available[1:]:
-                costs = np.where(allowed, np.minimum(costs, costs[::-1] + 1), 10**6)
-            assert int(costs.min()) == minimum == row["theoretical_minimum"] == row["switches"]
+            minimum = fewest_switches(available)
+            assert minimum == row["theoretical_minimum"]
+            assert row["switches"] == minimum + row["switch_excess"] >= minimum
 
 
 def check_benchmark():

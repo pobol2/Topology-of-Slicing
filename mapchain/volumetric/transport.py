@@ -18,9 +18,6 @@ from mapchain.volumetric.hilbert import hilbert_3d
 BUILD = NATIVE / "semidiscrete_geogram_build_v1.10.1/build"
 
 
-EXECUTABLE = BUILD / "bin/semidiscrete_adapter.exe"
-
-
 def contains_chunked(mesh, points, batch_size=512):
     """Identical mesh membership queries with a bounded ray-cast working set."""
     points = np.asarray(points)

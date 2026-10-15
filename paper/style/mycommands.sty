@@ -13,11 +13,13 @@
 \DeclareMathOperator{\supp}{supp}
 \DeclareMathOperator{\dist}{dist}
 
+% ── Vectors and matrices: bold upright (Greek via upgreek, e.g. \vect{\upxi}) ──
+\newcommand{\vect}[1]{\bm{\mathrm{#1}}}
+
 % ── Spaces and recurring notation ─────────────────────────────────────────────
 \newcommand{\Xs}{\mathcal{X}}                 % source space
 \newcommand{\Qs}{\mathcal{Q}}                 % configuration space
 \newcommand{\Qfree}{\Qs_{\mathrm{free}}}
-\newcommand{\Hil}{\mathcal{H}_3}              % 3D Hilbert traversal
 \newcommand{\Paths}[1]{\operatorname{PC}(#1)} % piecewise continuous paths [0,1]->M
 \newcommand{\ppath}{m_{\mathrm{path}}}  % Hilbert order of the evaluated path
 \newcommand{\pot}{m_{\mathrm{OT}}}      % Hilbert order of the fitted transport

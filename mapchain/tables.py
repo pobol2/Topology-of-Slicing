@@ -21,7 +21,7 @@ PARTS = (
 )
 ORDERS = (4, 5, 6)
 DENSITIES = (("uniform", "Uniform"), ("gradient", "Gradient"))
-KINEMATIC_ORDERS = (2, 3, 4)
+KINEMATIC_ORDERS = (3, 4, 5)
 
 
 def load(path):
@@ -101,12 +101,12 @@ EXPERIMENTS_GEOMETRIES = r"""% Written by python -m mapchain tables from results
 \begin{papertable}
   \begin{papertabular}{lrrrrrrrrrr}
     \toprule
-    Part & $m$ & Inside & \papertablehead{Ext.\\seg.} & \papertablehead{Ext.\\length} & Depth & \papertablehead{Ext.\\runs} & Jumps & $D_m$ & \papertablehead{Cover.\\radius} & \papertablehead{Max.\\step} \\
+    Part & $m$ & Inside & \papertablehead{Ext.\\seg.} & \papertablehead{Ext.\\length} & Depth & \papertablehead{Ext.\\runs} & Jumps & $d^{(m)}$ & \papertablehead{Cover.\\radius} & \papertablehead{Max.\\step} \\
     \midrule
 ROWS
     \bottomrule
   \end{papertabular}
-  \caption{All fifteen uniform runs, at $8^m$ waypoints (BUDGETS). ``Inside'' is the fraction of waypoints inside $\Omega$; ``Ext.\ seg.'' and ``Ext.\ length'' are the fractions of exterior segments and exterior path length; ``Depth'' is the deepest sampled excursion. Distances ($D_m$, depth, covering radius, and maximum step) are in normalised units (Appendix~\ref{sec:implementation}); exterior runs and jumps are counts.}
+  \caption{All fifteen uniform runs, at $8^m$ waypoints (BUDGETS). ``Inside'' is the fraction of waypoints inside $\Omega$; ``Ext.\ seg.'' and ``Ext.\ length'' are the fractions of exterior segments and exterior path length; ``Depth'' is the deepest sampled excursion. Distances ($d^{(m)}$, depth, covering radius, and maximum step) are in normalised units (Appendix~\ref{sec:implementation}); exterior runs and jumps are counts.}
   \label{tab:experiments-geometries}
 \end{papertable}
 """
@@ -155,7 +155,7 @@ SHEETS_3R_RESULTS = r"""% Written by python -m mapchain tables from results/kine
 ROWS
     \bottomrule
   \end{papertabular}
-  \caption{Three-link comparison of geometry-first (G) and kinematics-first (K) at $4^m$ waypoints. Resets are observed discrete posture changes. Coverage error is in target units; density error is total variation of original-waypoint shares on $4\times8$ area bins. Planning time is the median time to plan and certify one request. Kinematics-first also has a one-time preparation of $PREPARATION$~s; the shared fibre analysis ($FIBRE$~s) is excluded for both.}
+  \caption{Three-link comparison of geometry-first (G) and kinematics-first (K) at $4^m$ waypoints. Resets are observed discrete posture changes: sheet switches, plus in-sheet resets after $+$ where the warm-started lift loses its branch inside a sheet. Coverage error is in target units; density error is total variation of original-waypoint shares on $4\times8$ area bins. Planning time is the median time to plan and certify one request. Kinematics-first also has a one-time preparation of $PREPARATION$~s; the shared fibre analysis ($FIBRE$~s) is excluded for both.}
   \label{tab:sheets-3r-results}
 \end{papertable}
 """
@@ -181,7 +181,8 @@ def sheets_3r_results():
                     [
                         label if i == 0 else "",
                         str(m),
-                        str(g["switches"]),
+                        str(g["switches"])
+                        + (f"$+${g['in_sheet_resets']}" if g["in_sheet_resets"] else ""),
                         str(k["switches"]),
                         f"{g['coverage_error']:.3f}",
                         f"{k['coverage_error']:.3f}",
@@ -205,12 +206,12 @@ DECOMPOSITION_MAIN = r"""% Written by python -m mapchain tables from results/eva
 \begin{papertable}
   \begin{papertabular}{lrrrrrr}
     \toprule
-    Object & Pieces & Waypoints & $\max_j U_j$ & In piece & \papertablehead{Exterior\\segments} & \papertablehead{Sampled\\depth} \\
+    Object & Pieces & Waypoints & $\max_j\gamma^{\mathrm{ub}}(\Omega_j)$ & In piece & \papertablehead{Exterior\\segments} & \papertablehead{Sampled\\depth} \\
     \midrule
 ROWS
     \bottomrule
   \end{papertabular}
-  \caption{Independent piece paths, uniform density, 4096 waypoints per piece. ``In piece'' is the percentage of waypoints inside their assigned piece; exterior segments are measured against that same piece. Depth is the largest sampled excursion; $U_j$ is the numerical hull-gap upper bound. Distances are in normalised units (Appendix~\ref{sec:implementation}).}
+  \caption{Independent piece paths, uniform density, 4096 waypoints per piece. ``In piece'' is the percentage of waypoints inside their assigned piece; exterior segments are measured against that same piece. Depth is the largest sampled excursion; $\gamma^{\mathrm{ub}}(\Omega_j)$ is the numerical upper bound on the hull gap of piece $j$. Distances are in normalised units (Appendix~\ref{sec:implementation}).}
   \label{tab:decomposition}
 \end{papertable}
 """

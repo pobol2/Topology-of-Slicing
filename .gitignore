@@ -22,6 +22,7 @@ Thumbs.db
 
 # Temporary files
 tmp/
+results/kinematics/scout.png
 
 # Test and LaTeX leftovers outside paper/build/
 .pytest_cache/

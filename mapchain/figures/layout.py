@@ -28,7 +28,7 @@ RC = {
     "xtick.labelsize": FONT,
     "ytick.labelsize": FONT,
     "legend.fontsize": FONT,
-    "text.latex.preamble": "\\usepackage[T1]{fontenc}\\usepackage{lmodern}",
+    "text.latex.preamble": "\\usepackage[T1]{fontenc}\\usepackage{lmodern}\\usepackage{bm}\\usepackage{upgreek}",
 }
 
 
@@ -62,7 +62,8 @@ def prepare(fig, name):
         for ax in fig.axes[:-1]:
             pos = ax.get_position()
             ax.set_position([pos.x0, 0.35, pos.width, 0.5])
-        fig.axes[-1].set_position([0.005, 0.18, 0.99, 0.055])
+        # Colour bar from the first to the last column centre: each tick under its image.
+        fig.axes[-1].set_position([0.1, 0.18, 0.8, 0.055])
     fig.canvas.draw()
     for text in fig.findobj(match=Text):
         text.set_fontsize(FONT)
@@ -91,7 +92,7 @@ def savefig(fig, filename, *args, **kwargs):
     with fitz.open(path) as pdf:
         assert abs(pdf[0].rect.width - WIDTH) < 0.001
         fonts = [font[3] for font in pdf[0].get_fonts()]
-    assert all(font.startswith(("LM", "CM")) for font in fonts), (path.stem, fonts)
+    assert all(font.startswith(("LM", "CM", "EU")) for font in fonts), (path.stem, fonts)
     print("LATEX", path.stem, flush=True)
 
 

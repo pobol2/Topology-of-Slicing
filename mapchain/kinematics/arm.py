@@ -5,19 +5,21 @@ from __future__ import annotations
 import numpy as np
 from scipy.optimize import minimize
 
-LINKS = (1.0, 0.5, 0.5)
+LINKS = (1.0, 1.0, 1.0)
 
 
-OBSTACLES = np.array([(0.9, np.sqrt(0.19), 0.2), (0.9, -np.sqrt(0.19), 0.2), (1.35, 0.1, 0.1)])
+OBSTACLES = np.array([(0.5, -0.5, 0.2), (1.2, 0.4, 0.2), (1.9, -0.6, 0.2)])
 
 
-RMIN, RMAX = (1.6, 1.85)
+RMIN, RMAX = (2.35, 2.7)
 
 
-ANGLE = np.pi / 6
+ANGLE = np.pi / 4
+DEG = float(np.rad2deg(ANGLE))
 
 
-WEIGHTS = np.array([2.0, 1.0, 0.5])
+# Distance from each joint to the tip: bounds arm-point motion per unit joint motion.
+WEIGHTS = np.cumsum(np.asarray(LINKS, dtype=float)[::-1])[::-1]
 
 
 MARGIN = 0.001
@@ -65,6 +67,28 @@ class Collision:
     def clearance(self, q):
         return self.distances(q).min(axis=-1)
 
+    def distance_jacobian(self, q):
+        """Exact d(distances)/dq for one pose, rows ordered as distances().
+
+        The closest point y on link k moves by perp(y - p_j) per unit q_j for
+        j <= k (the clamp parameter drops out at the optimum), so each row is
+        -unit(c - y) . perp(y - p_j). One evaluation counts as one query.
+        """
+        q = np.asarray(q)
+        self.queries += 1
+        p = joints(q)
+        a, d = (p[:-1], np.diff(p, axis=0))
+        v = self.obstacles[:, None, :] - a[None]
+        t = np.clip(np.sum(v * d[None], -1) / np.sum(d * d, -1)[None], 0, 1)
+        y = a[None] + t[..., None] * d[None]
+        u = self.obstacles[:, None, :] - y
+        u = u / np.maximum(np.linalg.norm(u, axis=-1, keepdims=True), 1e-15)
+        lever = y[:, :, None, :] - p[None, None, :3, :]
+        perp = np.stack((-lever[..., 1], lever[..., 0]), -1)
+        grad = -np.sum(u[:, :, None, :] * perp, -1)
+        grad *= np.arange(3)[None, :, None] >= np.arange(3)[None, None, :]
+        return grad.reshape(3 * len(self.obstacles), 3)
+
 
 def workspace(st, radial_range=None):
     st = np.asarray(st)
@@ -85,7 +109,11 @@ def solve_ik(x, seed, collision, margin=MARGIN):
     collision.ik_solves += 1
     constraints = [
         {"type": "eq", "fun": lambda q: forward(q) - x, "jac": jacobian},
-        {"type": "ineq", "fun": lambda q: collision.distances(q) - margin},
+        {
+            "type": "ineq",
+            "fun": lambda q: collision.distances(q) - margin,
+            "jac": collision.distance_jacobian,
+        },
     ]
     result = minimize(
         lambda q: 0.5 * np.sum((q - seed) ** 2),
@@ -102,10 +130,59 @@ def solve_ik(x, seed, collision, margin=MARGIN):
     return q
 
 
+def solve_centred_ik(x, seed, collision, margin=MARGIN, pull=20.0):
+    """Warm-started IK that maximises the worst link/disk distance.
+
+    A slack t <= every distance is maximised, with a weak pull to the seed so
+    neighbouring chart vertices stay close. Local ascent from the seed keeps the
+    pose in the seed's safe component; chart faces then have room to certify.
+    """
+    collision.ik_solves += 1
+
+    def objective(z):
+        return -z[3] + 0.5 * pull * np.sum((z[:3] - seed) ** 2)
+
+    def gradient(z):
+        return np.r_[pull * (z[:3] - seed), -1.0]
+
+    constraints = [
+        {
+            "type": "eq",
+            "fun": lambda z: forward(z[:3]) - x,
+            "jac": lambda z: np.hstack((jacobian(z[:3]), np.zeros((2, 1)))),
+        },
+        {
+            "type": "ineq",
+            "fun": lambda z: collision.distances(z[:3]) - z[3],
+            "jac": lambda z: np.hstack(
+                (collision.distance_jacobian(z[:3]), -np.ones((3 * len(collision.radii), 1)))
+            ),
+        },
+        {
+            "type": "ineq",
+            "fun": lambda z: z[3] - margin,
+            "jac": lambda z: np.r_[0.0, 0.0, 0.0, 1.0],
+        },
+    ]
+    result = minimize(
+        objective,
+        np.r_[seed, max(margin, collision.clearance(seed))],
+        jac=gradient,
+        method="SLSQP",
+        bounds=[(-np.pi, np.pi)] * 3 + [(None, None)],
+        constraints=constraints,
+        options={"ftol": 1e-10, "maxiter": 200},
+    )
+    q = result.x[:3]
+    if np.linalg.norm(forward(q) - x) > 1e-07 or collision.clearance(q) < margin - 1e-07:
+        return solve_ik(x, seed, collision, margin=margin)
+    return q
+
+
 def certify(simplices, collision):
     """Guaranteed clearance for every affine simplex, not just its vertices.
 
-    Each arm point moves at most sum((2,1,.5)*abs(dq)). Segment/disk
+    Each arm point moves at most sum(WEIGHTS*abs(dq)). Segment/disk
     distance is Lipschitz under that bound. Convex combinations stay in
     the same joint box. Recursively subdivide only unresolved simplices.
     Works for both line segments and triangular configuration faces.
@@ -138,6 +215,24 @@ def certify(simplices, collision):
             )
 
 
+def as_band(phi_range):
+    """Angular band as a (3, n) array: radial chart nodes s, then phi_lo and phi_hi in degrees.
+
+    A plain (lo, hi) pair is the fixed-angle band; otherwise the limits are
+    interpolated linearly in s between nodes, so a handoff can follow the overlap.
+    """
+    band = np.asarray(phi_range, dtype=float)
+    if band.shape == (2,):
+        band = np.array([[0.0, 1.0], [band[0]] * 2, [band[1]] * 2])
+    return band
+
+
+def band_limits(band, s):
+    """phi_lo, phi_hi (degrees) of a band at radial chart coordinates s."""
+    band = as_band(band)
+    return (np.interp(s, band[0], band[1]), np.interp(s, band[0], band[2]))
+
+
 def build_patch(
     phi_range=None,
     obstacles=None,
@@ -146,13 +241,13 @@ def build_patch(
     radial_range=None,
     reverse_theta=False,
 ):
-    """Build a certified component chart over a specified sector-angle range."""
+    """Build a certified component chart over an angular band (fixed or radius-dependent)."""
     collision = Collision(obstacles)
-    phi_range = (-30.0, 30.0) if phi_range is None else phi_range
-    lo, hi = (np.asarray(phi_range) + 30) / 60
+    band = as_band((-DEG, DEG) if phi_range is None else phi_range)
 
     def chart_workspace(st):
-        mapped = np.asarray(st).copy()
+        mapped = np.asarray(st, dtype=float).copy()
+        lo, hi = ((np.asarray(v) + DEG) / (2 * DEG) for v in band_limits(band, mapped[..., 0]))
         mapped[..., 1] = lo + (hi - lo) * mapped[..., 1]
         return workspace(mapped, radial_range)
 
@@ -165,9 +260,10 @@ def build_patch(
     seed = seed_function(chart_workspace(st[0, start_j]), collision)
     for i in range(NR + 1):
         if i:
-            seed = seed_function(chart_workspace(st[i, start_j]), collision)
+            # Continue from the previous row so adjacent rows stay on the same branch.
+            seed = q[i - 1, start_j]
         for j in range(NT, -1, -1) if reverse_theta else range(NT + 1):
-            q[i, j] = solve_ik(chart_workspace(st[i, j]), seed, collision, margin=margin)
+            q[i, j] = solve_centred_ik(chart_workspace(st[i, j]), seed, collision, margin=margin)
             seed = q[i, j]
     faces = []
     for i in range(NR):

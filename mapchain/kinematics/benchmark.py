@@ -12,6 +12,7 @@ import numpy as np
 
 from mapchain.kinematics.arm import OBSTACLES, RMAX, RMIN, build_patch
 from mapchain.kinematics.sheets import (
+    ORDERS,
     OUT,
     availability,
     evaluate,
@@ -19,7 +20,9 @@ from mapchain.kinematics.sheets import (
     fibre_seed,
     geometry_plan,
     kinematics_plan,
+    patch_bands,
     request,
+    row_curves,
     stretch_collocation,
 )
 
@@ -40,7 +43,7 @@ def load_benchmark():
             request_plan="planning + certification of every continuous stretch; excludes evaluation and (geometry) availability scan",
             retained=dict(
                 shared="fibre analysis (fibre.json)",
-                kinematics="two certified patches (patch_*.npz) and the overlap split",
+                kinematics="one certified patch per chain family (patch_*.npz) and the handoff splits",
                 geometry="nothing beyond the shared fibre analysis",
             ),
             equality_check="every timed repeat reproduces the saved q arrays and switch counts",
@@ -79,41 +82,45 @@ def summary(values):
 def prepare(repeats):
     """Time the shared fibre analysis and the kinematics-first patch builds; compare with saved patches."""
     result = json.loads((OUT / "results.json").read_text())
-    ranges = [p["phi_range_degrees"] for p in result["preprocessing"]]
-    shared, patch = ([], [[], []])
+    bands = [np.array(p["band"]) for p in result["preprocessing"]]
+    k = len(bands)
+    shared, handoff, patch = ([], [], [[] for _ in range(k)])
     for rep in range(repeats):
         start = perf_counter()
         fibre, report = fibre_analysis()
-        shared.append(perf_counter() - start)
-        lo, hi = report["common_overlap_degrees"]
-        assert np.allclose([(-30.0, hi - 0.4), (lo + 0.4, 30.0)], ranges), (
-            "fresh fibre analysis gives different patch ranges"
+        # Chain choice includes the handoff curves (kinematics-first only); split the time.
+        handoff.append(report["handoff_seconds"])
+        shared.append(perf_counter() - start - handoff[-1])
+        fresh = patch_bands(*row_curves(report))
+        assert len(fresh) == k and all(np.allclose(a, b) for a, b in zip(fresh, bands)), (
+            "fresh fibre analysis gives different patch bands"
         )
-        for family in (0, 1):
+        for family in range(k):
             start = perf_counter()
             q, info = build_patch(
-                ranges[family],
+                bands[family],
                 OBSTACLES,
                 seed_function=lambda x, c, family=family, fibre=fibre: fibre_seed(
                     x, family, fibre, c
                 ),
                 margin=0.004,
                 radial_range=(RMIN, RMAX),
-                reverse_theta=family == 1,
+                reverse_theta=family == k - 1 and k > 1,
             )
             patch[family].append(perf_counter() - start)
             saved = np.load(OUT / f"patch_{family}.npz")["q"]
             assert np.allclose(q, saved, atol=1e-06), f"patch {family} differs from saved"
         print(
-            f"prep repeat {rep + 1}/{repeats}: shared {shared[-1]:.2f}s, patches {patch[0][-1]:.2f}s+{patch[1][-1]:.2f}s",
+            f"prep repeat {rep + 1}/{repeats}: shared {shared[-1]:.2f}s, handoffs {handoff[-1]:.2f}s, "
+            f"patches {'+'.join(f'{p[-1]:.2f}s' for p in patch)}",
             flush=True,
         )
     data = load_benchmark()
     data["prep"] = dict(
         shared_fibre_analysis=summary(shared),
-        patch_0=summary(patch[0]),
-        patch_1=summary(patch[1]),
-        kinematics_preparation=summary(np.array(patch[0]) + np.array(patch[1])),
+        handoffs=summary(handoff),
+        **{f"patch_{f}": summary(p) for f, p in enumerate(patch)},
+        kinematics_preparation=summary(np.array(handoff) + np.sum(patch, axis=0)),
         fibre_collision_queries=report["collision_queries"],
         patch_collision_queries=sum(
             p["preprocessing_collision_queries"] for p in result["preprocessing"]
@@ -126,15 +133,15 @@ def prepare(repeats):
 
 def requests(method, orders, repeats, densities=DENSITIES, eval_repeats=3, diag_repeats=3):
     result = json.loads((OUT / "results.json").read_text())
-    ranges = [p["phi_range_degrees"] for p in result["preprocessing"]]
-    split = result["split_phi_degrees"]
-    patches = [np.load(OUT / f"patch_{f}.npz")["q"] for f in (0, 1)]
+    bands = [np.array(p["band"]) for p in result["preprocessing"]]
+    curves, s_nodes = (np.array(result["handoff_curves"]), np.array(result["handoff_s"]))
+    patches = [np.load(OUT / f"patch_{f}.npz")["q"] for f in range(len(bands))]
     saved_rows = {(r["method"], r["order"], r["density"]): r for r in result["requests"]}
     fibre = None
     plan = (
         (lambda o, d, diag=False: geometry_plan(o, d, fibre, diagnostics=diag))
         if method == "geometry"
-        else lambda o, d, diag=False: kinematics_plan(o, d, patches, ranges, split)
+        else lambda o, d, diag=False: kinematics_plan(o, d, patches, bands, curves, s_nodes)
     )
     plan(2, "uniform")
     data = load_benchmark()
@@ -187,12 +194,12 @@ def benchmark_main(argv=None):
     )
     parser.add_argument("--prep", action="store_true")
     parser.add_argument("--method", choices=("geometry", "kinematics"))
-    parser.add_argument("--orders", nargs="+", type=int, default=[2, 3, 4])
+    parser.add_argument("--orders", nargs="+", type=int, default=[3, 4, 5])
     parser.add_argument("--densities", nargs="+", default=list(DENSITIES), choices=DENSITIES)
     parser.add_argument("--repeats", type=int, default=5)
     args = parser.parse_args(argv)
-    if any(o not in (2, 3, 4) for o in args.orders):
-        parser.error("orders 2-4 only")
+    if any(o not in ORDERS for o in args.orders):
+        parser.error(f"orders {ORDERS} only")
     if args.prep:
         prepare(args.repeats)
     if args.method:

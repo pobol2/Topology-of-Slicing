@@ -6,15 +6,15 @@
     \cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
     Density & $m$ & G & K & G & K & G & K & G & K \\
     \midrule
-    Uniform & 2 & 2 & 1 & 0.242 & 0.276 & 0.500 & 0.500 & 2.52 & 0.005 \\
-    & 3 & 2 & 1 & 0.121 & 0.139 & 0.000 & 0.000 & 4.92 & 0.013 \\
-    & 4 & 2 & 1 & 0.061 & 0.062 & 0.000 & 0.000 & 9.82 & 0.039 \\
+    Uniform & 3 & 4 & 2 & 0.265 & 0.291 & 0.000 & 0.031 & 10.92 & 0.015 \\
+    & 4 & 4 & 2 & 0.133 & 0.145 & 0.000 & 0.070 & 18.03 & 0.055 \\
+    & 5 & 4 & 2 & 0.066 & 0.069 & 0.000 & 0.029 & 35.79 & 0.168 \\
     \addlinespace
-    Gradient & 2 & 2 & 1 & 0.398 & 0.363 & 0.457 & 0.469 & 2.34 & 0.005 \\
-    & 3 & 2 & 1 & 0.217 & 0.197 & 0.172 & 0.188 & 4.79 & 0.014 \\
-    & 4 & 2 & 1 & 0.114 & 0.117 & 0.043 & 0.062 & 9.95 & 0.039 \\
+    Gradient & 3 & 4 & 2 & 0.475 & 0.570 & 0.172 & 0.158 & 9.25 & 0.016 \\
+    & 4 & 4$+$1 & 2 & 0.250 & 0.217 & 0.043 & 0.068 & 17.04 & 0.055 \\
+    & 5 & 4$+$1 & 2 & 0.129 & 0.136 & 0.031 & 0.032 & 29.59 & 0.168 \\
     \bottomrule
   \end{papertabular}
-  \caption{Three-link comparison of geometry-first (G) and kinematics-first (K) at $4^m$ waypoints. Resets are observed discrete posture changes. Coverage error is in target units; density error is total variation of original-waypoint shares on $4\times8$ area bins. Planning time is the median time to plan and certify one request. Kinematics-first also has a one-time preparation of $14.2$~s; the shared fibre analysis ($8.2$~s) is excluded for both.}
+  \caption{Three-link comparison of geometry-first (G) and kinematics-first (K) at $4^m$ waypoints. Resets are observed discrete posture changes: sheet switches, plus in-sheet resets after $+$ where the warm-started lift loses its branch inside a sheet. Coverage error is in target units; density error is total variation of original-waypoint shares on $4\times8$ area bins. Planning time is the median time to plan and certify one request. Kinematics-first also has a one-time preparation of $21.0$~s; the shared fibre analysis ($15.8$~s) is excluded for both.}
   \label{tab:sheets-3r-results}
 \end{papertable}

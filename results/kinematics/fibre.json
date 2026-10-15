@@ -1,85 +1,451 @@
 {
   "links": [
     1.0,
-    0.5,
-    0.5
+    1.0,
+    1.0
   ],
   "obstacles": [
     [
-      0.9,
-      0.43588989435406733,
+      0.5,
+      -0.5,
       0.2
     ],
     [
-      0.9,
-      -0.43588989435406733,
+      1.2,
+      0.4,
       0.2
     ],
     [
-      1.35,
-      0.1,
-      0.1
+      1.9,
+      -0.6,
+      0.2
     ]
   ],
   "radial_interval": [
-    1.6,
-    1.85
+    2.35,
+    2.7
   ],
   "radius_reports": [
     {
-      "radius": 1.6,
+      "radius": 2.35,
       "components": [
         {
           "id": 1,
-          "samples": 63723,
+          "samples": 50342,
           "phi_range_degrees": [
-            -29.999999999999996,
-            19.400000000000006
+            -45.0,
+            -12.149999999999999
           ],
           "last_link_range_degrees": [
-            -99.5,
-            87.75
+            -92.75,
+            44.0
           ],
           "elbow_signs": [
-            -1,
-            1
+            -1
           ],
           "first_link_range_degrees": [
-            -14.304027343563165,
-            14.30473437255429
+            -28.56830144764786,
+            29.4555914020632
           ],
-          "selected_family": "down"
+          "chain_families": [
+            0
+          ]
         },
         {
           "id": 2,
-          "samples": 35683,
+          "samples": 51950,
           "phi_range_degrees": [
-            -29.999999999999996,
-            -7.899999999999999
+            -45.0,
+            -14.700000000000001
           ],
           "last_link_range_degrees": [
-            -19.0,
-            54.25
+            -78.25,
+            33.5
           ],
           "elbow_signs": [
             -1,
             1
           ],
           "first_link_range_degrees": [
-            -66.8697670490464,
-            -37.38085909618734
+            -102.54054295867618,
+            -61.4302718386222
           ],
-          "selected_family": null
+          "chain_families": []
         },
         {
           "id": 3,
-          "samples": 35683,
+          "samples": 11616,
           "phi_range_degrees": [
-            7.899999999999999,
-            29.999999999999996
+            -23.25,
+            0.14999999999999858
           ],
           "last_link_range_degrees": [
-            -54.25,
+            -80.75,
+            -21.25
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.56944287289359,
+            13.238648441055426
+          ],
+          "chain_families": [
+            1
+          ]
+        },
+        {
+          "id": 4,
+          "samples": 100128,
+          "phi_range_degrees": [
+            -6.600000000000001,
+            45.0
+          ],
+          "last_link_range_degrees": [
+            -58.5,
+            99.25
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -5.621672939696651,
+            102.54054295867618
+          ],
+          "chain_families": [
+            2
+          ]
+        },
+        {
+          "id": 5,
+          "samples": 33081,
+          "phi_range_degrees": [
+            -13.350000000000001,
+            43.5
+          ],
+          "last_link_range_degrees": [
+            -23.0,
+            95.5
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.56936960740434,
+            42.484572280056604
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 6,
+          "samples": 1378,
+          "phi_range_degrees": [
+            -10.800000000000004,
+            -3.899999999999998
+          ],
+          "last_link_range_degrees": [
+            -6.25,
+            24.75
+          ],
+          "elbow_signs": [
+            1
+          ],
+          "first_link_range_degrees": [
+            -64.5174595253068,
+            -61.43102433763772
+          ],
+          "chain_families": []
+        }
+      ],
+      "family_phi_ranges": [
+        [
+          -45.0,
+          -13.350000000000001
+        ],
+        [
+          -22.2,
+          0.14999999999999858
+        ],
+        [
+          -5.25,
+          45.0
+        ]
+      ]
+    },
+    {
+      "radius": 2.408333333333333,
+      "components": [
+        {
+          "id": 1,
+          "samples": 48458,
+          "phi_range_degrees": [
+            -45.0,
+            -10.350000000000001
+          ],
+          "last_link_range_degrees": [
+            -91.25,
+            43.5
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            -28.569878570902816,
+            26.10050406853265
+          ],
+          "chain_families": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "samples": 48934,
+          "phi_range_degrees": [
+            -45.0,
+            -14.250000000000002
+          ],
+          "last_link_range_degrees": [
+            -76.25,
+            29.000000000000004
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -99.45590665298218,
+            -61.43065511860107
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 3,
+          "samples": 13621,
+          "phi_range_degrees": [
+            -25.05,
+            4.5
+          ],
+          "last_link_range_degrees": [
+            -79.5,
+            -10.25
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.569276382754307,
+            14.384373535281698
+          ],
+          "chain_families": [
+            1
+          ]
+        },
+        {
+          "id": 4,
+          "samples": 94919,
+          "phi_range_degrees": [
+            -5.25,
+            45.0
+          ],
+          "last_link_range_degrees": [
+            -54.5,
+            97.0
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -0.47378092109507963,
+            99.45590665298218
+          ],
+          "chain_families": [
+            2
+          ]
+        },
+        {
+          "id": 5,
+          "samples": 29955,
+          "phi_range_degrees": [
+            -13.05,
+            42.14999999999999
+          ],
+          "last_link_range_degrees": [
+            -19.5,
+            91.25
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.569486136022032,
+            37.34012420600382
+          ],
+          "chain_families": []
+        }
+      ],
+      "family_phi_ranges": [
+        [
+          -45.0,
+          -13.350000000000001
+        ],
+        [
+          -22.2,
+          0.14999999999999858
+        ],
+        [
+          -3.899999999999998,
+          45.0
+        ]
+      ]
+    },
+    {
+      "radius": 2.466666666666667,
+      "components": [
+        {
+          "id": 1,
+          "samples": 46395,
+          "phi_range_degrees": [
+            -45.0,
+            -9.149999999999999
+          ],
+          "last_link_range_degrees": [
+            -90.75,
+            41.75
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            -28.56960432041861,
+            22.784544044676238
+          ],
+          "chain_families": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "samples": 45351,
+          "phi_range_degrees": [
+            -45.0,
+            -14.4
+          ],
+          "last_link_range_degrees": [
+            -74.25,
+            24.000000000000004
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -96.30126150930656,
+            -61.43025055445507
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 3,
+          "samples": 90007,
+          "phi_range_degrees": [
+            -3.899999999999998,
+            45.0
+          ],
+          "last_link_range_degrees": [
+            -50.0,
+            94.5
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            4.120335784664105,
+            96.30126150930656
+          ],
+          "chain_families": [
+            2
+          ]
+        },
+        {
+          "id": 4,
+          "samples": 44797,
+          "phi_range_degrees": [
+            -26.1,
+            40.64999999999999
+          ],
+          "last_link_range_degrees": [
+            -77.25,
+            87.0
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.569475860729106,
+            32.92201177442417
+          ],
+          "chain_families": [
+            1
+          ]
+        }
+      ],
+      "family_phi_ranges": [
+        [
+          -45.0,
+          -11.850000000000003
+        ],
+        [
+          -23.55,
+          4.5
+        ],
+        [
+          -2.25,
+          45.0
+        ]
+      ]
+    },
+    {
+      "radius": 2.5250000000000004,
+      "components": [
+        {
+          "id": 1,
+          "samples": 44167,
+          "phi_range_degrees": [
+            -45.0,
+            -8.25
+          ],
+          "last_link_range_degrees": [
+            -92.0,
+            39.75
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            -28.56622022977568,
+            19.482737462488064
+          ],
+          "chain_families": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "samples": 41155,
+          "phi_range_degrees": [
+            -45.0,
+            -15.150000000000002
+          ],
+          "last_link_range_degrees": [
+            -72.0,
             19.0
           ],
           "elbow_signs": [
@@ -87,124 +453,43 @@
             1
           ],
           "first_link_range_degrees": [
-            37.38085909618736,
-            66.8697670490464
+            -93.0530528562588,
+            -61.43068934039189
           ],
-          "selected_family": null
-        },
-        {
-          "id": 4,
-          "samples": 37902,
-          "phi_range_degrees": [
-            -10.799999999999997,
-            29.999999999999996
-          ],
-          "last_link_range_degrees": [
-            -79.25,
-            99.5
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            -14.304734372554277,
-            14.30319237790647
-          ],
-          "selected_family": "up"
-        }
-      ],
-      "family_phi_ranges": [
-        [
-          -29.999999999999996,
-          19.400000000000006
-        ],
-        [
-          -10.799999999999997,
-          29.999999999999996
-        ]
-      ],
-      "anchors_connected": false,
-      "overlap_degrees": [
-        -10.799999999999997,
-        19.400000000000006
-      ]
-    },
-    {
-      "radius": 1.75,
-      "components": [
-        {
-          "id": 1,
-          "samples": 82103,
-          "phi_range_degrees": [
-            -29.999999999999996,
-            16.1
-          ],
-          "last_link_range_degrees": [
-            -82.5,
-            68.0
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            -14.302937561632717,
-            14.304919511131295
-          ],
-          "selected_family": "down"
-        },
-        {
-          "id": 2,
-          "samples": 27417,
-          "phi_range_degrees": [
-            -29.999999999999996,
-            -12.7
-          ],
-          "last_link_range_degrees": [
-            -39.0,
-            34.0
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            -58.955003525892295,
-            -37.38005578127344
-          ],
-          "selected_family": null
+          "chain_families": []
         },
         {
           "id": 3,
-          "samples": 27417,
+          "samples": 84992,
           "phi_range_degrees": [
-            12.700000000000003,
-            29.999999999999996
+            -2.25,
+            45.0
           ],
           "last_link_range_degrees": [
-            -34.0,
-            39.0
+            -45.5,
+            92.0
           ],
           "elbow_signs": [
             -1,
             1
           ],
           "first_link_range_degrees": [
-            37.38005578127344,
-            58.955003525892295
+            7.850502654953778,
+            93.0530528562588
           ],
-          "selected_family": null
+          "chain_families": [
+            2
+          ]
         },
         {
           "id": 4,
-          "samples": 56949,
+          "samples": 47937,
           "phi_range_degrees": [
-            -7.699999999999999,
-            29.999999999999996
+            -26.7,
+            39.14999999999999
           ],
           "last_link_range_degrees": [
-            -59.5,
+            -74.75,
             82.5
           ],
           "elbow_signs": [
@@ -212,257 +497,966 @@
             1
           ],
           "first_link_range_degrees": [
-            -14.290878884509215,
-            14.296749735839082
+            -28.56982863894807,
+            29.317186328182025
           ],
-          "selected_family": "up"
+          "chain_families": [
+            1
+          ]
         }
       ],
       "family_phi_ranges": [
         [
-          -29.999999999999996,
-          16.1
+          -45.0,
+          -10.649999999999999
         ],
         [
-          -7.699999999999999,
-          29.999999999999996
+          -24.45,
+          37.349999999999994
+        ],
+        [
+          -0.6000000000000014,
+          45.0
         ]
-      ],
-      "anchors_connected": false,
-      "overlap_degrees": [
-        -7.699999999999999,
-        16.1
       ]
     },
     {
-      "radius": 1.8,
+      "radius": 2.5833333333333335,
       "components": [
         {
           "id": 1,
-          "samples": 81195,
+          "samples": 41724,
           "phi_range_degrees": [
-            -29.999999999999996,
-            14.700000000000001
+            -45.0,
+            -8.100000000000001
           ],
           "last_link_range_degrees": [
-            -76.25,
-            60.5
+            -89.5,
+            36.5
           ],
           "elbow_signs": [
             -1,
             1
           ],
           "first_link_range_degrees": [
-            -14.30470501711935,
-            14.304858017140711
+            -28.569576745001907,
+            16.15331309723713
           ],
-          "selected_family": "down"
+          "chain_families": [
+            0
+          ]
         },
         {
           "id": 2,
-          "samples": 23217,
+          "samples": 36098,
           "phi_range_degrees": [
-            -29.999999999999996,
-            -14.899999999999999
+            -45.0,
+            -16.95
           ],
           "last_link_range_degrees": [
-            -43.0,
-            26.250000000000004
+            -69.5,
+            13.75
           ],
           "elbow_signs": [
             -1,
             1
           ],
           "first_link_range_degrees": [
-            -55.841838879741275,
-            -37.39327600644094
+            -89.68177483155718,
+            -61.431907049073594
           ],
-          "selected_family": null
+          "chain_families": []
         },
         {
           "id": 3,
-          "samples": 23217,
+          "samples": 1,
           "phi_range_degrees": [
-            14.900000000000006,
-            29.999999999999996
+            -12.149999999999999,
+            -12.149999999999999
           ],
           "last_link_range_degrees": [
+            -13.5,
+            -13.5
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            26.339564699478064,
+            26.339564699478064
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 4,
+          "samples": 79508,
+          "phi_range_degrees": [
+            -0.6000000000000014,
+            45.0
+          ],
+          "last_link_range_degrees": [
+            -40.75,
+            89.0
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            10.776227783879248,
+            89.68177483155718
+          ],
+          "chain_families": [
+            2
+          ]
+        },
+        {
+          "id": 5,
+          "samples": 50483,
+          "phi_range_degrees": [
+            -26.85,
+            37.349999999999994
+          ],
+          "last_link_range_degrees": [
+            -71.5,
+            77.75
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.56970354426132,
+            26.390302107982684
+          ],
+          "chain_families": [
+            1
+          ]
+        }
+      ],
+      "family_phi_ranges": [
+        [
+          -45.0,
+          -10.050000000000004
+        ],
+        [
+          -24.900000000000002,
+          35.55
+        ],
+        [
+          1.3500000000000014,
+          45.0
+        ]
+      ]
+    },
+    {
+      "radius": 2.6416666666666666,
+      "components": [
+        {
+          "id": 1,
+          "samples": 38961,
+          "phi_range_degrees": [
+            -45.0,
+            -8.25
+          ],
+          "last_link_range_degrees": [
+            -86.0,
+            32.75
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.563660942363665,
+            12.78007514116546
+          ],
+          "chain_families": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "samples": 29290,
+          "phi_range_degrees": [
+            -45.0,
+            -20.400000000000002
+          ],
+          "last_link_range_degrees": [
+            -66.75,
+            8.0
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -86.1481756402669,
+            -61.43000040518012
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 3,
+          "samples": 73447,
+          "phi_range_degrees": [
+            1.3500000000000014,
+            45.0
+          ],
+          "last_link_range_degrees": [
+            -35.75,
+            85.75
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            13.070046189148037,
+            86.1481756402669
+          ],
+          "chain_families": [
+            2
+          ]
+        },
+        {
+          "id": 4,
+          "samples": 52397,
+          "phi_range_degrees": [
+            -26.7,
+            35.55
+          ],
+          "last_link_range_degrees": [
+            -67.75,
+            72.5
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.569478327739112,
+            24.00121160662668
+          ],
+          "chain_families": [
+            1
+          ]
+        }
+      ],
+      "family_phi_ranges": [
+        [
+          -45.0,
+          -10.350000000000001
+        ],
+        [
+          -24.900000000000002,
+          33.45
+        ],
+        [
+          3.299999999999997,
+          45.0
+        ]
+      ]
+    },
+    {
+      "radius": 2.7,
+      "components": [
+        {
+          "id": 1,
+          "samples": 35789,
+          "phi_range_degrees": [
+            -45.0,
+            -8.850000000000001
+          ],
+          "last_link_range_degrees": [
+            -82.25,
+            28.500000000000004
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            -28.56993784809961,
+            9.292721093218248
+          ],
+          "chain_families": [
+            0
+          ]
+        },
+        {
+          "id": 2,
+          "samples": 4,
+          "phi_range_degrees": [
+            -16.95,
+            -16.8
+          ],
+          "last_link_range_degrees": [
+            -32.0,
+            -31.250000000000004
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            20.276617957908098,
+            20.41475863580525
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 3,
+          "samples": 1,
+          "phi_range_degrees": [
+            -16.650000000000002,
+            -16.650000000000002
+          ],
+          "last_link_range_degrees": [
+            -30.750000000000004,
+            -30.750000000000004
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            20.485547889200138,
+            20.485547889200138
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 4,
+          "samples": 1,
+          "phi_range_degrees": [
+            -16.5,
+            -16.5
+          ],
+          "last_link_range_degrees": [
+            -30.25,
+            -30.25
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            20.583031799850215,
+            20.583031799850215
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 5,
+          "samples": 2,
+          "phi_range_degrees": [
+            -16.35,
+            -16.35
+          ],
+          "last_link_range_degrees": [
+            -29.75,
+            -29.500000000000004
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            20.63235167859891,
+            20.675925857384566
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 6,
+          "samples": 1,
+          "phi_range_degrees": [
+            -16.200000000000003,
+            -16.200000000000003
+          ],
+          "last_link_range_degrees": [
+            -29.000000000000004,
+            -29.000000000000004
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            20.717485383787732,
+            20.717485383787732
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 7,
+          "samples": 1,
+          "phi_range_degrees": [
+            -16.05,
+            -16.05
+          ],
+          "last_link_range_degrees": [
+            -28.500000000000004,
+            -28.500000000000004
+          ],
+          "elbow_signs": [
+            -1
+          ],
+          "first_link_range_degrees": [
+            20.798153412070505,
+            20.798153412070505
+          ],
+          "chain_families": []
+        },
+        {
+          "id": 8,
+          "samples": 66724,
+          "phi_range_degrees": [
+            3.299999999999997,
+            45.0
+          ],
+          "last_link_range_degrees": [
+            -30.25,
+            82.25
+          ],
+          "elbow_signs": [
+            -1,
+            1
+          ],
+          "first_link_range_degrees": [
+            14.92672652234114,
+            82.39707628882302
+          ],
+          "chain_families": [
+            2
+          ]
+        },
+        {
+          "id": 9,
+          "samples": 53743,
+          "phi_range_degrees": [
             -26.250000000000004,
-            43.0
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            37.39327600644111,
-            55.841838879741275
-          ],
-          "selected_family": null
-        },
-        {
-          "id": 4,
-          "samples": 52730,
-          "phi_range_degrees": [
-            -6.199999999999999,
-            29.999999999999996
+            33.45
           ],
           "last_link_range_degrees": [
-            -52.0,
-            76.25
+            -63.50000000000001,
+            67.0
           ],
           "elbow_signs": [
             -1,
             1
           ],
           "first_link_range_degrees": [
-            -11.817607920414195,
-            14.30437851432308
+            -28.569268486744505,
+            22.00036309665361
           ],
-          "selected_family": "up"
+          "chain_families": [
+            1
+          ]
+        },
+        {
+          "id": 10,
+          "samples": 22204,
+          "phi_range_degrees": [
+            -45.0,
+            -24.150000000000002
+          ],
+          "last_link_range_degrees": [
+            -63.75000000000001,
+            2.0
+          ],
+          "elbow_signs": [
+            1
+          ],
+          "first_link_range_degrees": [
+            -82.39707628882302,
+            -61.42995472121604
+          ],
+          "chain_families": []
         }
       ],
       "family_phi_ranges": [
         [
-          -29.999999999999996,
-          14.700000000000001
+          -45.0,
+          -10.350000000000001
         ],
         [
-          -6.199999999999999,
-          29.999999999999996
-        ]
-      ],
-      "anchors_connected": false,
-      "overlap_degrees": [
-        -6.199999999999999,
-        14.700000000000001
-      ]
-    },
-    {
-      "radius": 1.85,
-      "components": [
-        {
-          "id": 1,
-          "samples": 76301,
-          "phi_range_degrees": [
-            -29.999999999999996,
-            12.900000000000006
-          ],
-          "last_link_range_degrees": [
-            -68.75,
-            52.0
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            -14.304848849852455,
-            14.304246116956856
-          ],
-          "selected_family": "down"
-        },
-        {
-          "id": 2,
-          "samples": 17620,
-          "phi_range_degrees": [
-            -29.999999999999996,
-            -17.4
-          ],
-          "last_link_range_degrees": [
-            -43.5,
-            17.5
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            -52.33156237424694,
-            -37.39567862616208
-          ],
-          "selected_family": null
-        },
-        {
-          "id": 3,
-          "samples": 17620,
-          "phi_range_degrees": [
-            17.400000000000006,
-            29.999999999999996
-          ],
-          "last_link_range_degrees": [
-            -17.5,
-            43.5
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            37.39567862616208,
-            52.33156237424694
-          ],
-          "selected_family": null
-        },
-        {
-          "id": 4,
-          "samples": 44611,
-          "phi_range_degrees": [
-            -4.3999999999999995,
-            29.999999999999996
-          ],
-          "last_link_range_degrees": [
-            -43.5,
-            68.75
-          ],
-          "elbow_signs": [
-            -1,
-            1
-          ],
-          "first_link_range_degrees": [
-            -7.998197175755658,
-            14.30155195428206
-          ],
-          "selected_family": "up"
-        }
-      ],
-      "family_phi_ranges": [
-        [
-          -29.999999999999996,
-          12.900000000000006
+          -24.900000000000002,
+          33.45
         ],
         [
-          -4.3999999999999995,
-          29.999999999999996
+          3.299999999999997,
+          45.0
         ]
-      ],
-      "anchors_connected": false,
-      "overlap_degrees": [
-        -4.3999999999999995,
-        12.900000000000006
       ]
     }
   ],
-  "common_overlap_degrees": [
-    -4.3999999999999995,
-    12.900000000000006
+  "chain_length": 3,
+  "sheets": 12,
+  "sheet_summary": [
+    {
+      "sheet": 0,
+      "samples": 305836,
+      "radii_present": 7,
+      "main": true,
+      "inner_extent_degrees": [
+        -45.0,
+        -12.149999999999999
+      ],
+      "outer_extent_degrees": [
+        -45.0,
+        -8.850000000000001
+      ]
+    },
+    {
+      "sheet": 1,
+      "samples": 274982,
+      "radii_present": 7,
+      "main": true,
+      "inner_extent_degrees": [
+        -45.0,
+        -14.700000000000001
+      ],
+      "outer_extent_degrees": [
+        -45.0,
+        -24.150000000000002
+      ]
+    },
+    {
+      "sheet": 2,
+      "samples": 337630,
+      "radii_present": 7,
+      "main": true,
+      "inner_extent_degrees": [
+        -23.25,
+        43.5
+      ],
+      "outer_extent_degrees": [
+        -26.250000000000004,
+        33.45
+      ]
+    },
+    {
+      "sheet": 3,
+      "samples": 589725,
+      "radii_present": 7,
+      "main": true,
+      "inner_extent_degrees": [
+        -6.600000000000001,
+        45.0
+      ],
+      "outer_extent_degrees": [
+        3.299999999999997,
+        45.0
+      ]
+    },
+    {
+      "sheet": 4,
+      "samples": 1378,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": [
+        -10.800000000000004,
+        -3.899999999999998
+      ],
+      "outer_extent_degrees": null
+    },
+    {
+      "sheet": 5,
+      "samples": 1,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": null
+    },
+    {
+      "sheet": 6,
+      "samples": 4,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": [
+        -16.95,
+        -16.8
+      ]
+    },
+    {
+      "sheet": 7,
+      "samples": 1,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": [
+        -16.650000000000002,
+        -16.650000000000002
+      ]
+    },
+    {
+      "sheet": 8,
+      "samples": 1,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": [
+        -16.5,
+        -16.5
+      ]
+    },
+    {
+      "sheet": 9,
+      "samples": 2,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": [
+        -16.35,
+        -16.35
+      ]
+    },
+    {
+      "sheet": 10,
+      "samples": 1,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": [
+        -16.200000000000003,
+        -16.200000000000003
+      ]
+    },
+    {
+      "sheet": 11,
+      "samples": 1,
+      "radii_present": 1,
+      "main": false,
+      "inner_extent_degrees": null,
+      "outer_extent_degrees": [
+        -16.05,
+        -16.05
+      ]
+    }
   ],
+  "chain_sheets": [
+    0,
+    2,
+    3
+  ],
+  "tracks": [
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      10
+    ],
+    [
+      3,
+      3,
+      4,
+      4,
+      5,
+      4,
+      9
+    ],
+    [
+      4,
+      4,
+      3,
+      3,
+      4,
+      3,
+      8
+    ],
+    [
+      5,
+      5,
+      4,
+      4,
+      5,
+      4,
+      9
+    ]
+  ],
+  "track_spans": [
+    [
+      [
+        -45.0,
+        -13.350000000000001
+      ],
+      [
+        -45.0,
+        -13.350000000000001
+      ],
+      [
+        -45.0,
+        -11.850000000000003
+      ],
+      [
+        -45.0,
+        -10.649999999999999
+      ],
+      [
+        -45.0,
+        -10.050000000000004
+      ],
+      [
+        -45.0,
+        -10.350000000000001
+      ],
+      [
+        -45.0,
+        -10.350000000000001
+      ]
+    ],
+    [
+      [
+        -45.0,
+        -15.600000000000003
+      ],
+      [
+        -45.0,
+        -15.600000000000003
+      ],
+      [
+        -45.0,
+        -15.75
+      ],
+      [
+        -45.0,
+        -17.1
+      ],
+      [
+        -45.0,
+        -20.400000000000002
+      ],
+      [
+        -45.0,
+        -24.150000000000002
+      ],
+      [
+        -45.0,
+        -24.150000000000002
+      ]
+    ],
+    [
+      [
+        -22.2,
+        0.14999999999999858
+      ],
+      [
+        -22.2,
+        0.14999999999999858
+      ],
+      [
+        -23.55,
+        4.5
+      ],
+      [
+        -24.45,
+        37.349999999999994
+      ],
+      [
+        -24.900000000000002,
+        35.55
+      ],
+      [
+        -24.900000000000002,
+        33.45
+      ],
+      [
+        -24.900000000000002,
+        33.45
+      ]
+    ],
+    [
+      [
+        -5.25,
+        45.0
+      ],
+      [
+        -3.899999999999998,
+        45.0
+      ],
+      [
+        -2.25,
+        45.0
+      ],
+      [
+        -0.6000000000000014,
+        45.0
+      ],
+      [
+        1.3500000000000014,
+        45.0
+      ],
+      [
+        3.299999999999997,
+        45.0
+      ],
+      [
+        3.299999999999997,
+        45.0
+      ]
+    ],
+    [
+      [
+        -12.75,
+        42.14999999999999
+      ],
+      [
+        -12.450000000000003,
+        40.64999999999999
+      ],
+      [
+        -12.450000000000003,
+        39.14999999999999
+      ],
+      [
+        -24.45,
+        37.349999999999994
+      ],
+      [
+        -24.900000000000002,
+        35.55
+      ],
+      [
+        -24.900000000000002,
+        33.45
+      ],
+      [
+        -24.900000000000002,
+        33.45
+      ]
+    ]
+  ],
+  "chain": [
+    0,
+    2,
+    3
+  ],
+  "rejected_chains": [],
+  "common_overlap_degrees": [
+    [
+      [
+        -22.2,
+        -13.350000000000001
+      ],
+      [
+        -22.2,
+        -13.350000000000001
+      ],
+      [
+        -23.55,
+        -11.850000000000003
+      ],
+      [
+        -24.45,
+        -10.649999999999999
+      ],
+      [
+        -24.900000000000002,
+        -10.050000000000004
+      ],
+      [
+        -24.900000000000002,
+        -10.350000000000001
+      ],
+      [
+        -24.900000000000002,
+        -10.350000000000001
+      ]
+    ],
+    [
+      [
+        -5.25,
+        0.14999999999999858
+      ],
+      [
+        -3.899999999999998,
+        0.14999999999999858
+      ],
+      [
+        -2.25,
+        4.5
+      ],
+      [
+        -0.6000000000000014,
+        37.349999999999994
+      ],
+      [
+        1.3500000000000014,
+        35.55
+      ],
+      [
+        3.299999999999997,
+        33.45
+      ],
+      [
+        3.299999999999997,
+        33.45
+      ]
+    ]
+  ],
+  "handoff_s": [
+    0.0,
+    0.15704070407040607,
+    0.31793179317931786,
+    0.4826732673267334,
+    0.651265126512651,
+    0.8237073707370729,
+    1.0
+  ],
+  "handoff_curves": [
+    [
+      -18.19999999999991,
+      -20.099999999999937,
+      -21.499999999999957,
+      -22.39999999999997,
+      -22.799999999999976,
+      -22.799999999999976,
+      -22.799999999999976
+    ],
+    [
+      -4.050000000000003,
+      -1.350000000000013,
+      1.6499999999999764,
+      4.649999999999966,
+      5.949999999999961,
+      5.949999999999961,
+      5.949999999999961
+    ]
+  ],
+  "handoff_clearance": [
+    0.08715586329952635,
+    0.054071019230356454
+  ],
+  "handoff_seconds": 5.318623500003014,
   "grid": {
-    "phi_step_degrees": 0.1,
-    "last_link_step_degrees": 0.25,
+    "phi_step_degrees": 0.14999999999999702,
+    "last_link_step_degrees": 0.24999999999998446,
     "radii": [
-      1.6,
-      1.75,
-      1.8,
-      1.85
+      2.35,
+      2.408333333333333,
+      2.466666666666667,
+      2.5250000000000004,
+      2.5833333333333335,
+      2.6416666666666666,
+      2.7
     ],
     "elbow_signs": [
       -1,
       1
     ]
   },
-  "safe_elbow_seam_joins": 1976,
-  "collision_queries": 6948809,
-  "seconds": 8.05846470000688,
-  "connectivity_statement": "Endpoint-anchored families are separate in the sampled labelled fibre graph at each reported radius, including certified safe elbow-sign seam joins. This sampling does not prove absence of a connection at all intermediate radii or arbitrarily narrow unsampled passages. Small extra grid components may be discretization fragments; outer first-link corridors are also reported."
+  "safe_elbow_seam_joins": 3566,
+  "collision_queries": 12165078,
+  "seconds": 21.251268499996513,
+  "connectivity_statement": "Chained families are separate in the sampled labelled fibre graph at each reported radius, including certified safe elbow-sign seam joins. Families are tracked across radii by shared grid cells and may share a component where sheets merge. A family's usable span at a radius keeps only angle columns where its component shares cells with the adjacent radii; consecutive spans overlap at every sampled radius. Handoff curves follow those overlaps. This is sampled evidence: it neither proves a continuous section exists nor rules out unsampled connections."
 }

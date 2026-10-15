@@ -9,8 +9,8 @@ from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 from shapely.geometry import Polygon as Poly
 
 from mapchain.evaluation.whole_part import uniform_path, waypoints
+from mapchain.figures.palette import PATH, RED  # noqa: F401 (re-exported to the 3D figures)
 
-BLUE, RED = ("#1f77b4", "#d62728")
 L_PLAN = Poly([(0.05, 0.05), (0.95, 0.05), (0.95, 0.35), (0.35, 0.35), (0.35, 0.95), (0.05, 0.95)])
 TOP = (90, -90)  # view from above
 
